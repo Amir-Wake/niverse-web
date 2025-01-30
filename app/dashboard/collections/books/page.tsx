@@ -4,7 +4,7 @@ import { auth } from "@/firebase/config";
 import { signOut } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { FaSearch } from "react-icons/fa";
 
@@ -13,7 +13,7 @@ interface Book {
   title: string;
 }
 
-export default function Books() {
+  function Books() {
   const [books, setBooks] = useState<Book[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
@@ -191,5 +191,13 @@ export default function Books() {
       <br />
       <br />
     </>
+  );
+}
+
+export default function BooksPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Books />
+    </Suspense>
   );
 }
