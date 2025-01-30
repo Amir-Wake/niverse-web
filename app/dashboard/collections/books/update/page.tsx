@@ -36,7 +36,7 @@ interface HandleChangeEvent
     | (HTMLTextAreaElement & { name: string; value: string });
 }
 
-  function Update() {
+function Update() {
   const [book, setBook] = useState<Book | null>(null);
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -45,14 +45,17 @@ interface HandleChangeEvent
   const [user] = useAuthState(auth);
   const collectionName = useSearchParams().get("collection");
   const Id = useSearchParams().get("id");
-  const sessionStorageUser = sessionStorage.getItem("user");
+  let userSession: string | null = null;
 
   useEffect(() => {
-    if (!user && !sessionStorageUser) {
-      router.push("/login");
-    } else {
-      fetchBooks();
+    if (typeof window !== "undefined") {
+      userSession = sessionStorage.getItem("user");
     }
+
+    if (!user && !userSession) {
+      router.push("/login");
+    }
+    fetchBooks();
   }, [user, router]);
 
   const fetchBooks = (): void => {
@@ -93,7 +96,9 @@ interface HandleChangeEvent
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     e.preventDefault();
     if (!book) {
       console.error("Book data is not available");
@@ -182,8 +187,13 @@ interface HandleChangeEvent
         <Button className="py-2 px-4 rounded" onClick={handleBack}>
           &#x25c0; {collectionName}
         </Button>
-        <h2 className="text-center text-2xl font-bold p-2 rounded-md">Update</h2>
-        <Button className="bg-red-500 text-white py-2 px-4 rounded" onClick={handleSignOut}>
+        <h2 className="text-center text-2xl font-bold p-2 rounded-md">
+          Update
+        </h2>
+        <Button
+          className="bg-red-500 text-white py-2 px-4 rounded"
+          onClick={handleSignOut}
+        >
           Sign Out
         </Button>
       </div>
@@ -192,7 +202,10 @@ interface HandleChangeEvent
         <div className="flex justify-center">
           <div className="w-full max-w-lg">
             {book && (
-              <Form onSubmit={handleSubmit} className="space-y-4 bg-white text-black p-3">
+              <Form
+                onSubmit={handleSubmit}
+                className="space-y-4 bg-white text-black p-3"
+              >
                 <Form.Group id="title">
                   <Form.Label>Title</Form.Label>
                   <Form.Control
@@ -222,7 +235,11 @@ interface HandleChangeEvent
                     alt={book.title}
                     className="mt-3 w-48 h-72 object-cover"
                   />
-                  <Form.Control type="file" onChange={handleImageChange} className="w-full px-3 py-2 border rounded" />
+                  <Form.Control
+                    type="file"
+                    onChange={handleImageChange}
+                    className="w-full px-3 py-2 border rounded"
+                  />
                 </Form.Group>
                 <Form.Group id="shortDescription" className="mt-3">
                   <Form.Label>Short Description</Form.Label>
@@ -326,10 +343,17 @@ interface HandleChangeEvent
                 </Form.Group>
                 <Form.Group id="file" className="mt-3">
                   <Form.Label>File</Form.Label>
-                  <Form.Control type="file" onChange={handleFileChange} className="w-full px-3 py-2 border rounded" />
+                  <Form.Control
+                    type="file"
+                    onChange={handleFileChange}
+                    className="w-full px-3 py-2 border rounded"
+                  />
                 </Form.Group>
                 <div className="text-center mt-4">
-                  <Button className="bg-blue-500 text-white py-2 px-4 rounded" type="submit">
+                  <Button
+                    className="bg-blue-500 text-white py-2 px-4 rounded"
+                    type="submit"
+                  >
                     Update
                   </Button>
                 </div>

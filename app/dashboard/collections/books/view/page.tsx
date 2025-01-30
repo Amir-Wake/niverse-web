@@ -2,7 +2,7 @@
 import { Button } from "react-bootstrap";
 import { auth } from "@/firebase/config";
 import { signOut } from "firebase/auth";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -20,19 +20,23 @@ interface Book {
   publicationDate: string;
 }
 
-export default function View() {
+  function View() {
   const [book, setBook] = useState<Book | null>(null);
   const router = useRouter();
   const [user] = useAuthState(auth);
-  const sessionStorageUser = sessionStorage.getItem("user");
   const collectionName = useSearchParams().get("collection");
   const Id = useSearchParams().get("id");
+  let userSession: string | null = null;
+
   useEffect(() => {
-    if (!user && !sessionStorageUser) {
-      router.push("/login");
-    } else {
-      fetchBooks();
+    if (typeof window !== "undefined") {
+      userSession = sessionStorage.getItem("user");
     }
+
+    if (!user && !userSession) {
+      router.push("/login");
+    }
+    fetchBooks();
   }, [user, router]);
 
   const fetchBooks = (): void => {
@@ -132,5 +136,13 @@ export default function View() {
       <br />
       <br />
     </>
+  );
+}
+
+export default function ViewPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <View />
+    </Suspense>
   );
 }

@@ -10,9 +10,13 @@ import { FaBook, FaPlus } from "react-icons/fa";
 export default function Main() {
   const router = useRouter();
   const [user] = useAuthState(auth);
-  const userSession = sessionStorage.getItem("user");
+  let userSession: string | null = null;
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      userSession = sessionStorage.getItem("user");
+    }
+
     if (!user && !userSession) {
       router.push("/login");
     }
@@ -45,9 +49,7 @@ export default function Main() {
           Sign Out
         </Button>
       </div>
-      <h2 className="text-center mb-4 text-5xl p-2">
-            Dashboard
-          </h2>
+      <h2 className="text-center mb-4 text-5xl p-2">Dashboard</h2>
       <div className="flex justify-center items-center">
         <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
           <div className="flex flex-col items-center">

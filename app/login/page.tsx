@@ -1,9 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import { useRouter } from "next/navigation";
 import { auth, getUserRole } from "@/firebase/config";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -12,10 +12,14 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  React.useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        router.push("/dashboard/");
+        const role = await getUserRole(user);
+        if (role === "admin") {
+          sessionStorage.setItem("user", "true");
+          router.push("/dashboard/");
+        }
       }
     });
     return () => unsubscribe();

@@ -1,19 +1,23 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase/config";
 import { signOut } from "firebase/auth";
 import { FaFolder } from "react-icons/fa";
 
-export default function Collections() {
+function Collections() {
   const [collections, setCollections] = useState<string[]>([]);
   const router = useRouter();
   const [user] = useAuthState(auth);
-  const sessionStorageUser = sessionStorage.getItem("user");
+  let userSession: string | null = null;
 
   useEffect(() => {
-    if (!user && !sessionStorageUser) {
+    if (typeof window !== "undefined") {
+      userSession = sessionStorage.getItem("user");
+    }
+
+    if (!user && !userSession) {
       router.push("/login");
     }
   }, [user, router]);
@@ -40,15 +44,10 @@ export default function Collections() {
   return (
     <>
       <div className="flex justify-between items-center text-center p-3 mb-20">
-        <button
-          className=" py-2 px-4 rounded text-xl"
-          onClick={handleBack}
-        >
+        <button className=" py-2 px-4 rounded text-xl" onClick={handleBack}>
           &#x25c0; Dashboard
         </button>
-        <h2 className="text-center font-semibold text-2xl p-2 ">
-            Collections
-          </h2>
+        <h2 className="text-center font-semibold text-2xl p-2 ">Collections</h2>
         <button
           className="bg-red-500 text-white py-2 px-4 rounded text-xl"
           onClick={handleSignOut}
@@ -70,7 +69,7 @@ export default function Collections() {
                     )
                   }
                 >
-                  <FaFolder size={48} className="mr-3" />
+                  <FaFolder size={48} className="mr-3 text-yellow-400" />
                   {collection}
                 </button>
               </div>
@@ -81,5 +80,13 @@ export default function Collections() {
       <br />
       <br />
     </>
+  );
+}
+
+export default function CollectionPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Collections />
+    </Suspense>
   );
 }
