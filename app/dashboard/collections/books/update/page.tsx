@@ -183,11 +183,12 @@ function Update() {
 
   return (
     <>
+      <title>dashboard</title>
       <div className="flex justify-between items-center p-3 border-b-2">
-        <Button className="py-2 px-4 rounded" onClick={handleBack}>
+        <Button className="py-2 px-4 text-xl rounded" onClick={handleBack}>
           &#x25c0; {collectionName}
         </Button>
-        <h2 className="text-center text-2xl font-bold p-2 rounded-md">
+        <h2 className="text-center text-2xl font-bold ">
           Update
         </h2>
         <Button

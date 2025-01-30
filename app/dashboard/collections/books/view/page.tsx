@@ -69,6 +69,7 @@ interface Book {
 
   return (
     <>
+      <title>dashboard</title>
       <div className="flex justify-between items-center text-center p-3 border-b-2">
         <Button
           className="py-2 px-4 rounded text-xl"
@@ -78,7 +79,7 @@ interface Book {
         </Button>
         <h2 className="text-center text-2xl font-bold">Book Details</h2>
         <Button
-          className="bg-red-500 text-white py-2 px-4 rounded text-xl"
+          className="bg-red-500 text-white py-2 px-4 rounded"
           onClick={handleSignOut}
         >
           Sign Out

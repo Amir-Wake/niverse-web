@@ -1,8 +1,8 @@
 "use client";
-import { Card, Button, Form, ProgressBar } from "react-bootstrap";
+import { Button, Form, ProgressBar } from "react-bootstrap";
 import { auth } from "@/firebase/config";
 import { signOut } from "firebase/auth";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import {
   getStorage,
   ref,
@@ -13,7 +13,7 @@ import { generateSequence } from "@/app/dashboard/utils/hash";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter } from "next/navigation";
 
-export default function Add() {
+function Add() {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [shortDescription, setShortDescription] = useState("");
@@ -32,9 +32,14 @@ export default function Add() {
   const storage = getStorage();
   const router = useRouter();
   const [user] = useAuthState(auth);
+  let userSession: string | null = null;
 
   useEffect(() => {
-    if (!user) {
+    if (typeof window !== "undefined") {
+      userSession = sessionStorage.getItem("user");
+    }
+
+    if (!user && !userSession) {
       router.push("/login");
     }
   }, [user, router]);
@@ -175,158 +180,196 @@ export default function Add() {
 
   return (
     <>
-      <div className="text-center d-flex justify-content-between">
-        <Button className="m-3 btn btn-secondary" onClick={handleBack}>
-          &#x25c0; Books
+      <title>dashboard</title>
+      <div className="flex justify-between items-center p-3 border-b-2">
+        <Button className="py-2 px-4 text-xl rounded" onClick={handleBack}>
+          &#x25c0; Dashboard
         </Button>
+        <h2 className="text-center text-2xl font-bold p-2 rounded-md">
+          Add Book
+        </h2>
         <Button
-          className=" m-3 "
-          style={{
-            backgroundColor: "red",
-            borderColor: "red",
-          }}
+          className="bg-red-500 text-white py-2 px-4 rounded"
           onClick={handleSignOut}
         >
           Sign Out
         </Button>
       </div>
       <br />
-      <h2 className="text-center mb-4">Add Book</h2>
-      <Card>
-        <Card.Body>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group id="collection">
-              <Form.Label>Collection</Form.Label>
-              <Form.Control
-                type="text"
-                value={collection}
-                onChange={(e) => setCollection(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Form.Group id="title">
-              <Form.Label>Title</Form.Label>
-              <Form.Control
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Form.Group id="author">
-              <Form.Label>Author</Form.Label>
-              <Form.Control
-                type="text"
-                value={author}
-                onChange={(e) => setAuthor(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Form.Group id="shortDescription">
-              <Form.Label>Short Description</Form.Label>
-              <Form.Control
-                type="text"
-                value={shortDescription}
-                onChange={(e) => setShortDescription(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Form.Group id="longDescription">
-              <Form.Label>Long Description</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                value={longDescription}
-                onChange={(e) => setLongDescription(e.target.value)}
-                required
-              />
-              <Form.Group id="genre">
-                <Form.Label>Genre (separated by commas)</Form.Label>
+      <div className="container mx-auto">
+        <div className="flex justify-center">
+          <div className="w-full max-w-lg">
+            <Form
+              onSubmit={handleSubmit}
+              className="space-y-4 bg-white text-black p-3"
+            >
+              <Form.Group id="collection">
+                <Form.Label>Collection</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={collection}
+                  onChange={(e) => setCollection(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </Form.Group>
+              <Form.Group id="title">
+                <Form.Label>Title</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </Form.Group>
+              <Form.Group id="author">
+                <Form.Label>Author</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={author}
+                  onChange={(e) => setAuthor(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </Form.Group>
+              <Form.Group id="shortDescription" className="mt-3">
+                <Form.Label>Short Description</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={shortDescription}
+                  onChange={(e) => setShortDescription(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </Form.Group>
+              <Form.Group id="longDescription" className="mt-3">
+                <Form.Label>Long Description</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={longDescription}
+                  onChange={(e) => setLongDescription(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </Form.Group>
+              <Form.Group id="genre" className="mt-3">
+                <Form.Label>Genre (comma separated)</Form.Label>
                 <Form.Control
                   type="text"
                   value={genre}
                   onChange={(e) => setGenre(e.target.value)}
                   required
+                  className="w-full px-3 py-2 border rounded"
                 />
               </Form.Group>
-            </Form.Group>
-            <Form.Group id="printLength">
-              <Form.Label>Print Length</Form.Label>
-              <Form.Control
-                type="text"
-                value={printLength}
-                onChange={(e) => setPrintLength(e.target.value)}
-                required
+              <Form.Group id="printLength" className="mt-3">
+                <Form.Label>Print Length</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={printLength}
+                  onChange={(e) => setPrintLength(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </Form.Group>
+              <Form.Group id="ageRate" className="mt-3">
+                <Form.Label>Age Rating</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={ageRate}
+                  onChange={(e) => setAgeRate(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </Form.Group>
+              <Form.Group id="language" className="mt-3">
+                <Form.Label>Language</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </Form.Group>
+              <Form.Group id="publisher" className="mt-3">
+                <Form.Label>Publisher</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={publisher}
+                  onChange={(e) => setPublisher(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </Form.Group>
+              <Form.Group id="translator" className="mt-3">
+                <Form.Label>Translator</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={translator}
+                  onChange={(e) => setTranslator(e.target.value)}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </Form.Group>
+              <Form.Group id="publicationDate" className="mt-3">
+                <Form.Label>Publication Date</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={publicationDate}
+                  onChange={(e) => setPublicationDate(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </Form.Group>
+              <Form.Group id="coverImage" className="mt-3">
+                <Form.Label>Cover Image</Form.Label>
+                <Form.Control
+                  required
+                  type="file"
+                  onChange={handleImageChange}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </Form.Group>
+              <Form.Group id="epubFile" className="mt-3">
+                <Form.Label>File</Form.Label>
+                <Form.Control
+                  type="file"
+                  onChange={handleEpubChange}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </Form.Group>
+              <div className="text-center mt-4">
+                <Button
+                  className="bg-blue-500 text-white py-2 px-4 rounded"
+                  type="submit"
+                >
+                  Add Book
+                </Button>
+              </div>
+            </Form>
+            {uploadProgress > 0 && (
+              <ProgressBar
+                now={uploadProgress}
+                label={`${Math.round(uploadProgress)}%`}
+                className="mt-3"
               />
-            </Form.Group>
-            <Form.Group id="ageRate">
-              <Form.Label>Age Rating</Form.Label>
-              <Form.Control
-                type="text"
-                value={ageRate}
-                onChange={(e) => setAgeRate(e.target.value)}
-              />
-            </Form.Group>
-            <Form.Group id="language">
-              <Form.Label>Language</Form.Label>
-              <Form.Control
-                type="text"
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Form.Group id="publisher">
-              <Form.Label>Publisher</Form.Label>
-              <Form.Control
-                type="text"
-                value={publisher}
-                onChange={(e) => setPublisher(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Form.Group id="translator">
-              <Form.Label>Translator</Form.Label>
-              <Form.Control
-                type="text"
-                value={translator}
-                onChange={(e) => setTranslator(e.target.value)}
-              />
-            </Form.Group>
-            <Form.Group id="publicationDate">
-              <Form.Label>Publication Date</Form.Label>
-              <Form.Control
-                type="date"
-                value={publicationDate}
-                onChange={(e) => setPublicationDate(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Form.Group id="coverImage">
-              <Form.Label>Cover Image</Form.Label>
-              <Form.Control required type="file" onChange={handleImageChange} />
-            </Form.Group>
-            <Form.Group id="epubFile">
-              <Form.Label>File</Form.Label>
-              <Form.Control type="file" onChange={handleEpubChange} />
-            </Form.Group>
-            <div className="text-center">
-              <Button className="w-25 mt-3" type="submit">
-                Add Book
-              </Button>
-            </div>
-          </Form>
-          {uploadProgress > 0 && (
-            <ProgressBar
-              now={uploadProgress}
-              label={`${Math.round(uploadProgress)}%`}
-              className="mt-3"
-            />
-          )}
-        </Card.Body>
-      </Card>
+            )}
+          </div>
+        </div>
+      </div>
       <br />
       <br />
     </>
+  );
+}
+
+export default function AddPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Add />
+    </Suspense>
   );
 }

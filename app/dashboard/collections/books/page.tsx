@@ -119,13 +119,14 @@ function Books() {
 
   return (
     <>
+      <title>dashboard</title>
       <div className="flex justify-between items-center text-center p-3 border-b-2">
-        <Button className="py-2 px-4 rounded text-2xl" onClick={handleBack}>
+        <Button className="py-2 px-4 rounded text-xl" onClick={handleBack}>
           &#x25c0; Collections
         </Button>
-        <h2 className="text-center text-2xl font-semibold">{collectionName}</h2>
+        <h2 className="text-center text-2xl font-bold">{collectionName}</h2>
         <Button
-          className="bg-red-500 text-white py-2 px-4 rounded text-xl"
+          className="bg-red-500 text-white py-2 px-4 rounded"
           onClick={handleSignOut}
         >
           Sign Out

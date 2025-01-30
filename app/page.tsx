@@ -19,7 +19,9 @@ export default function Home() {
   };
 
   const handleNavItemClick = () => {
-    setIsNavbarCollapsed(true);
+    if (window.innerWidth < 992) {
+      setIsNavbarCollapsed(true);
+    }
   };
 
   useEffect(() => {
@@ -52,6 +54,7 @@ export default function Home() {
 
   return (
     <div>
+      <title>niVerse</title>
       <link
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"
         rel="stylesheet"

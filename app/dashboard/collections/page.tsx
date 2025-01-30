@@ -43,13 +43,14 @@ function Collections() {
   }
   return (
     <>
-      <div className="flex justify-between items-center text-center p-3 mb-20">
+      <title>dashboard</title>
+      <div className="flex justify-between items-center text-center p-3 mb-20 border-b-2">
         <button className=" py-2 px-4 rounded text-xl" onClick={handleBack}>
           &#x25c0; Dashboard
         </button>
-        <h2 className="text-center font-semibold text-2xl p-2 ">Collections</h2>
+        <h2 className="text-center font-bold text-2xl ">Collections</h2>
         <button
-          className="bg-red-500 text-white py-2 px-4 rounded text-xl"
+          className="bg-red-500 text-white py-2 px-4 rounded"
           onClick={handleSignOut}
         >
           Sign Out
