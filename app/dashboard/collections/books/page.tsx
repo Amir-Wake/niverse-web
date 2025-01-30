@@ -4,8 +4,9 @@ import { auth } from "@/firebase/config";
 import { signOut } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { FaSearch } from "react-icons/fa";
 
 interface Book {
   id: string;
@@ -114,60 +115,55 @@ export default function Books() {
 
   return (
     <>
-      <div className="text-center d-flex justify-content-between">
-        <Button className="m-3 btn btn-secondary" onClick={handleBack}>
+      <div className="flex justify-between items-center text-center p-3 border-b-2">
+        <Button
+          className="py-2 px-4 rounded text-2xl"
+          onClick={handleBack}
+        >
           &#x25c0; Collections
         </Button>
+        <h2 className="text-center text-2xl font-semibold">
+          {collectionName}
+        </h2>
         <Button
-          className=" m-3 "
-          style={{
-            backgroundColor: "red",
-            borderColor: "red",
-          }}
+          className="bg-red-500 text-white py-2 px-4 rounded text-xl"
           onClick={handleSignOut}
         >
           Sign Out
         </Button>
       </div>
       <br />
-      <div className="p-4">
-        <div style={{ width: "100%", margin: "auto" }}>
-          <h2 className="text-center mb-4">{collectionName}</h2>
-          <div className="text-center d-flex align-items-center justify-content-center mb-4">
-            <p className="mb-0 mr-2">Search</p>
-            <input
-              className="w-50 border"
-              type="text"
-              placeholder="Search books..."
-              onChange={handleSearch}
-              style={{ padding: "10px" }}
-            />
+      <div className="p-4 border rounded shadow-md">
+        <div className="w-full mx-auto">
+          <div className="flex items-center justify-center mb-4 text-center">
+            <div className="relative w-1/2 min-w-full">
+              <input
+                className="w-full border p-2 pl-10 text-black"
+                type="text"
+                placeholder="Search books..."
+                onChange={handleSearch}
+              />
+              <FaSearch className="absolute left-3 top-3 text-gray-400" />
+            </div>
           </div>
-          <ul
-            className="book-list"
-            style={{ listStyleType: "none", padding: 0 }}
-          >
+          <ul className="list-none p-0">
             {books.map((book, index) => (
               <li
                 key={`${book.id}-${index}`}
-                style={{
-                  marginBottom: "10px",
-                  padding: "10px",
-                  border: "1px solid #ccc",
-                }}
+                className="mb-2 p-2 border border-gray-300"
               >
                 <Link
                   href={`/dashboard/collections/books/view?collection=${collectionName}&id=${book.id}`}
-                  style={{ textDecoration: "none", fontSize: "20px" }}
+                  className="no-underline text-lg"
                 >
                   {book.title}
                 </Link>
-                <div style={{ marginTop: "5px" }}>
+                <div className="mt-1">
                   <Button
                     variant="none"
                     size="sm"
                     onClick={() => handleEdit(book.id)}
-                    style={{ marginRight: "10px" }}
+                    className="mr-2"
                   >
                     Edit
                   </Button>
@@ -175,7 +171,7 @@ export default function Books() {
                     variant="none"
                     size="sm"
                     onClick={() => handleDelete(book.id)}
-                    style={{ marginRight: "10px" }}
+                    className="mr-2"
                   >
                     Delete
                   </Button>

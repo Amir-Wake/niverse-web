@@ -1,5 +1,5 @@
 "use client";
-import { Card, Button, Form } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { auth } from "@/firebase/config";
 import { signOut } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -175,165 +175,170 @@ export default function Update() {
     router.push("/dashboard/collections/books?collection=" + collectionName);
   };
 
-  if(!user) return null;
+  if (!user) return null;
 
   return (
     <>
-      <div className="text-center d-flex justify-content-between">
-        <Button className="m-3 btn btn-secondary" onClick={handleBack}>
+      <div className="flex justify-between items-center p-3 border-b-2">
+        <Button className="py-2 px-4 rounded" onClick={handleBack}>
           &#x25c0; {collectionName}
         </Button>
-        <Button
-          className=" m-3 "
-          style={{
-            backgroundColor: "red",
-            borderColor: "red",
-            marginLeft: "20px",
-          }}
-          onClick={handleSignOut}
-        >
+        <h2 className="text-center text-2xl font-bold p-2 rounded-md">Update</h2>
+        <Button className="bg-red-500 text-white py-2 px-4 rounded" onClick={handleSignOut}>
           Sign Out
         </Button>
       </div>
       <br />
-      <h2 className="text-center mb-4">Update Book</h2>
-      <Card>
-        <Card.Body>
-          {book && (
-            <Form onSubmit={handleSubmit}>
-              <Form.Group id="title">
-                <Form.Label>Title</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="title"
-                  value={book.title}
-                  onChange={handleChange}
-                  required
-                />
-              </Form.Group>
-              <Form.Group id="author">
-                <Form.Label>Author</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="author"
-                  value={book.author}
-                  onChange={handleChange}
-                  required
-                />
-              </Form.Group>
-              <Form.Group id="coverImage" className="mt-3">
-                <Form.Label>Cover Image</Form.Label>
-                <Form.Control type="file" onChange={handleImageChange} />
-                <img
-                  src={book.coverImageUrl}
-                  alt={book.title}
-                  style={{ width: 200, height: 300 }}
-                />
-              </Form.Group>
-              <Form.Group id="file" className="mt-3">
-                <Form.Label>File</Form.Label>
-                <Form.Control type="file" onChange={handleFileChange} />
-              </Form.Group>
-              <Form.Group id="shortDescription" className="mt-3">
-                <Form.Label>Short Description</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  name="shortDescription"
-                  value={book.shortDescription}
-                  onChange={handleChange}
-                  required
-                />
-              </Form.Group>
-              <Form.Group id="longDescription">
-                <Form.Label>Long Description</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  name="longDescription"
-                  value={book.longDescription}
-                  onChange={handleChange}
-                  required
-                />
-              </Form.Group>
-              <Form.Group id="genre">
-                <Form.Label>Genre (comma separated)</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="genre"
-                  value={book.genre}
-                  onChange={handleChange}
-                  required
-                />
-              </Form.Group>
-              <Form.Group id="printLength">
-                <Form.Label>Print Length</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="printLength"
-                  value={book.printLength}
-                  onChange={handleChange}
-                  required
-                />
-              </Form.Group>
-              <Form.Group id="ageRate">
-                <Form.Label>Age Rating</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="ageRate"
-                  value={book.ageRate}
-                  onChange={handleChange}
-                  required
-                />
-              </Form.Group>
-              <Form.Group id="language">
-                <Form.Label>Language</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="language"
-                  value={book.language}
-                  onChange={handleChange}
-                  required
-                />
-              </Form.Group>
-              <Form.Group id="publisher">
-                <Form.Label>Publisher</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="publisher"
-                  value={book.publisher}
-                  onChange={handleChange}
-                  required
-                />
-              </Form.Group>
-              <Form.Group id="translator">
-                <Form.Label>Translator</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="translator"
-                  value={book.translator}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-              <Form.Group id="publicationDate">
-                <Form.Label>Publication Date</Form.Label>
-                <Form.Control
-                  type="date"
-                  name="publicationDate"
-                  value={book.publicationDate}
-                  onChange={handleChange}
-                  required
-                />
-              </Form.Group>
-              <div className="text-center">
-                <Button className="w-25 mt-3" type="submit">
-                  Update Book
-                </Button>
-              </div>
-            </Form>
-          )}
-        </Card.Body>
-      </Card>
+      <div className="container mx-auto">
+        <div className="flex justify-center">
+          <div className="w-full max-w-lg">
+            {book && (
+              <Form onSubmit={handleSubmit} className="space-y-4 bg-white text-black p-3">
+                <Form.Group id="title">
+                  <Form.Label>Title</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="title"
+                    value={book.title}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </Form.Group>
+                <Form.Group id="author">
+                  <Form.Label>Author</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="author"
+                    value={book.author}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </Form.Group>
+                <Form.Group id="coverImage" className="mt-3">
+                  <Form.Label>Cover Image</Form.Label>
+                  <img
+                    src={book.coverImageUrl}
+                    alt={book.title}
+                    className="mt-3 w-48 h-72 object-cover"
+                  />
+                  <Form.Control type="file" onChange={handleImageChange} className="w-full px-3 py-2 border rounded" />
+                </Form.Group>
+                <Form.Group id="shortDescription" className="mt-3">
+                  <Form.Label>Short Description</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    name="shortDescription"
+                    value={book.shortDescription}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </Form.Group>
+                <Form.Group id="longDescription" className="mt-3">
+                  <Form.Label>Long Description</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    name="longDescription"
+                    value={book.longDescription}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </Form.Group>
+                <Form.Group id="genre" className="mt-3">
+                  <Form.Label>Genre (comma separated)</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="genre"
+                    value={book.genre}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </Form.Group>
+                <Form.Group id="printLength" className="mt-3">
+                  <Form.Label>Print Length</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="printLength"
+                    value={book.printLength}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </Form.Group>
+                <Form.Group id="ageRate" className="mt-3">
+                  <Form.Label>Age Rating</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="ageRate"
+                    value={book.ageRate}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </Form.Group>
+                <Form.Group id="language" className="mt-3">
+                  <Form.Label>Language</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="language"
+                    value={book.language}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </Form.Group>
+                <Form.Group id="publisher" className="mt-3">
+                  <Form.Label>Publisher</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="publisher"
+                    value={book.publisher}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </Form.Group>
+                <Form.Group id="translator" className="mt-3">
+                  <Form.Label>Translator</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="translator"
+                    value={book.translator}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </Form.Group>
+                <Form.Group id="publicationDate" className="mt-3">
+                  <Form.Label>Publication Date</Form.Label>
+                  <Form.Control
+                    type="date"
+                    name="publicationDate"
+                    value={book.publicationDate}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </Form.Group>
+                <Form.Group id="file" className="mt-3">
+                  <Form.Label>File</Form.Label>
+                  <Form.Control type="file" onChange={handleFileChange} className="w-full px-3 py-2 border rounded" />
+                </Form.Group>
+                <div className="text-center mt-4">
+                  <Button className="bg-blue-500 text-white py-2 px-4 rounded" type="submit">
+                    Update
+                  </Button>
+                </div>
+              </Form>
+            )}
+          </div>
+        </div>
+      </div>
       <br />
       <br />
     </>

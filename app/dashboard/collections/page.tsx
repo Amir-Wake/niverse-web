@@ -1,5 +1,4 @@
 "use client";
-import { Card, Button } from "react-bootstrap";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -40,48 +39,45 @@ export default function Collections() {
   }
   return (
     <>
-      <div className="text-center d-flex justify-content-between">
-        <Button className="m-3 btn btn-secondary" onClick={handleBack}>
+      <div className="flex justify-between items-center text-center p-3 mb-20">
+        <button
+          className=" py-2 px-4 rounded text-xl"
+          onClick={handleBack}
+        >
           &#x25c0; Dashboard
-        </Button>
-        <Button
-          className="m-3 "
-          style={{
-            backgroundColor: "red",
-            borderColor: "red",
-          }}
+        </button>
+        <h2 className="text-center font-semibold text-2xl p-2 ">
+            Collections
+          </h2>
+        <button
+          className="bg-red-500 text-white py-2 px-4 rounded text-xl"
           onClick={handleSignOut}
         >
           Sign Out
-        </Button>
+        </button>
       </div>
       <br />
-      <h2 className="text-center">Collections</h2>
-      <Card>
-        <Card.Body className="justify-content-center max-w-50 mx-auto">
+      <div className="flex justify-center items-center">
+        <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
           <ul>
             {collections.map((collection, index) => (
-              <div key={index} className="d-flex align-items-center mt-3">
-                <Button
-                  className="w-100 d-flex align-items-center"
-                  style={{
-                    fontSize: "1.5rem",
-                    padding: "1rem",
-                  }}
+              <div key={index} className="flex items-center mt-3">
+                <button
+                  className="w-full text-black mt-3 flex items-center justify-center rounded-md border border-gray-600 text-2xl p-6"
                   onClick={() =>
                     router.push(
                       `/dashboard/collections/books?collection=${collection}`
                     )
                   }
                 >
-                  <FaFolder size={48} className="me-3" />
+                  <FaFolder size={48} className="mr-3" />
                   {collection}
-                </Button>
+                </button>
               </div>
             ))}
           </ul>
-        </Card.Body>
-      </Card>
+        </div>
+      </div>
       <br />
       <br />
     </>

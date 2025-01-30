@@ -1,5 +1,5 @@
 "use client";
-import { Card, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { auth } from "@/firebase/config";
 import { signOut } from "firebase/auth";
 import React, { useEffect, useState } from "react";
@@ -12,7 +12,7 @@ interface Book {
   coverImageUrl: string;
   shortDescription: string;
   longDescription: string;
-  genre: string;
+  genre: string[];
   printLength: string;
   language: string;
   translator: string;
@@ -65,69 +65,69 @@ export default function View() {
 
   return (
     <>
-      <div className="text-center d-flex justify-content-between">
-        <Button className="m-3 btn btn-secondary" onClick={handleBack}>
-          &#x25c0; Books
-        </Button>
+      <div className="flex justify-between items-center text-center p-3 border-b-2">
         <Button
-          className=" m-3 "
-          style={{
-            backgroundColor: "red",
-            borderColor: "red",
-          }}
+          className="py-2 px-4 rounded text-xl"
+          onClick={handleBack}
+        >
+          &#x25c0; {collectionName}
+        </Button>
+        <h2 className="text-center text-2xl font-bold">Book Details</h2>
+        <Button
+          className="bg-red-500 text-white py-2 px-4 rounded text-xl"
           onClick={handleSignOut}
         >
           Sign Out
         </Button>
       </div>
       <br />
-      <h2 className="text-center mb-4">Book Details</h2>
 
       {book ? (
-        <Card>
-          <Card.Body className="p-4">
-            <p>
-              <strong>Title:</strong> {book.title}
-            </p>
-            <p>
-              <strong>Author:</strong> {book.author}
-            </p>
-            <p>
-              <strong>Cover:</strong> <br />
+        <div className="max-w-4xl mx-auto p-4 bg-white shadow-md rounded-lg">
+          <div className="flex flex-col md:flex-row">
+            <div className="md:w-1/3">
               <img
                 src={book.coverImageUrl}
                 alt={book.title}
-                style={{ width: 200, height: 300 }}
+                className="w-auto h-auto rounded-lg"
               />
-            </p>
-            <p>
-              <strong>Short Description:</strong> {book.shortDescription}
-            </p>
-            <p>
-              <strong>Long Description:</strong> {book.longDescription}
-            </p>
-            <p>
-              <strong>Genre:</strong> {book.genre}
-            </p>
-            <p>
-              <strong>Print Length:</strong> {book.printLength}
-            </p>
-            <p>
-              <strong>Language:</strong> {book.language}
-            </p>
-            <p>
-              <strong>Translator:</strong> {book.translator}
-            </p>
-            <p>
-              <strong>Publisher:</strong> {book.publisher}
-            </p>
-            <p>
-              <strong>Publication Date:</strong> {book.publicationDate}
-            </p>
-          </Card.Body>
-        </Card>
+            </div>
+            <div className="md:w-2/3 md:pl-6">
+              <p className="text-xl font-semibold mb-2 text-gray-900">
+                <strong>Title:</strong> {book.title}
+              </p>
+              <p className="text-lg mb-2 text-gray-900">
+                <strong>Author:</strong> {book.author}
+              </p>
+              <p className="text-lg mb-2 text-gray-900">
+                <strong>Short Description:</strong> {book.shortDescription}
+              </p>
+              <p className="text-lg mb-2 text-gray-900">
+                <strong>Long Description:</strong> {book.longDescription}
+              </p>
+              <p className="text-lg mb-2 text-gray-900">
+                <strong>Genre:</strong> {book.genre.join(", ")}
+              </p>
+              <p className="text-lg mb-2 text-gray-900">
+                <strong>Print Length:</strong> {book.printLength}
+              </p>
+              <p className="text-lg mb-2 text-gray-900">
+                <strong>Language:</strong> {book.language}
+              </p>
+              <p className="text-lg mb-2 text-gray-900">
+                <strong>Translator:</strong> {book.translator}
+              </p>
+              <p className="text-lg mb-2 text-gray-900">
+                <strong>Publisher:</strong> {book.publisher}
+              </p>
+              <p className="text-lg mb-2 text-gray-900">
+                <strong>Publication Date:</strong> {book.publicationDate}
+              </p>
+            </div>
+          </div>
+        </div>
       ) : (
-        <p>Loading...</p>
+        <p className="text-center text-lg text-gray-900">Loading...</p>
       )}
       <br />
       <br />

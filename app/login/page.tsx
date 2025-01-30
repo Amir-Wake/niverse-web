@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { auth, getUserRole } from "@/firebase/config";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
+interface SigninEvent extends React.FormEvent<HTMLFormElement> {}
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,8 +14,15 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  interface SigninEvent extends React.FormEvent<HTMLFormElement> {}
-
+  React.useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        router.push("/dashboard/");
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
+  
   const signin = async (event: SigninEvent): Promise<void> => {
     event.preventDefault();
     setLoading(true);
@@ -45,61 +54,51 @@ export default function Login() {
   };
 
   return (
-    <section className="vh-100 ">
-      <div className="container py-5 h-100">
-        <div className="row d-flex justify-content-center align-items-center h-100">
-          <div className="col-12 col-md-8 col-lg-6 col-xl-5">
-            <div
-              className="card bg-dark text-white"
-              style={{ borderRadius: "1rem" }}
-            >
-              <div className="card-body p-5 text-center">
-                <div className="mb-md-5 mt-md-4 pb-5">
-                  <h2 className="fw-bold mb-2 text-uppercase">Login</h2>
-                  <p className="text-white-50 mb-5">
-                    Please enter your login and password!
-                  </p>
-                  {error && <Alert variant="danger">{error}</Alert>}
-                  <Form onSubmit={signin}>
-                    <div className="form-outline form-white mb-4">
-                      <Form.Label className="form-label" htmlFor="typeEmailX">
-                        Email
-                      </Form.Label>
-                      <Form.Control
-                        type="email"
-                        id="typeEmailX"
-                        className="form-control form-control-lg"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="form-outline form-white mb-4">
-                      <Form.Label
-                        className="form-label"
-                        htmlFor="typePasswordX"
-                      >
-                        Password
-                      </Form.Label>
-                      <Form.Control
-                        type="password"
-                        id="typePasswordX"
-                        className="form-control form-control-lg"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <Button
-                      disabled={loading}
-                      className="btn btn-outline-light btn-lg px-5"
-                      type="submit"
-                    >
-                      Login
-                    </Button>
-                  </Form>
-                </div>
+    <section className="min-h-screen flex items-center justify-center bg-gray-900">
+      <div className="container py-5">
+        <div className="flex justify-center items-center h-full">
+          <div className="w-full max-w-md">
+            <div className="bg-black text-white rounded-lg shadow-lg p-8">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-bold mb-2">Login</h2>
+                <p className="text-gray-400">Please enter your login and password!</p>
+                {error && <Alert variant="danger">{error}</Alert>}
               </div>
+              <Form onSubmit={signin}>
+                <div className="mb-4">
+                  <Form.Label className="block text-sm font-medium mb-1" htmlFor="typeEmailX">
+                    Email
+                  </Form.Label>
+                  <Form.Control
+                    type="email"
+                    id="typeEmailX"
+                    className="form-control text-black form-control-lg w-full p-2 border border-gray-300 rounded"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="mb-4">
+                  <Form.Label className="block text-sm font-medium mb-1" htmlFor="typePasswordX">
+                    Password
+                  </Form.Label>
+                  <Form.Control
+                    type="password"
+                    id="typePasswordX"
+                    className="form-control text-black form-control-lg w-full p-2 border border-gray-300 rounded"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <Button
+                  disabled={loading}
+                  className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+                  type="submit"
+                >
+                  Login
+                </Button>
+              </Form>
             </div>
           </div>
         </div>

@@ -1,9 +1,9 @@
 "use client"
 import React, { useState, useEffect } from "react";
-import appStore from "../public/app-store-badge.svg";
-import googlePlay from "../public/google-play-badge.svg";
-import demoScreen from "../public/demo-screen.mp4";
-import bgni from "../public/bgni.png";
+import appStore from "@/public/app-store-badge.svg";
+import googlePlay from "@/public/google-play-badge.svg";
+import demoScreen from "@/public/demo-screen.mp4";
+import bgni from "@/public/bgni.png";
 import './styles.css';
 
 export default function Home() {
@@ -24,7 +24,7 @@ export default function Home() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
+      if (window.scrollY > 50 && window.innerWidth < 992) {
         setIsNavbarCollapsed(true);
       }
     };
@@ -43,7 +43,7 @@ export default function Home() {
     };
 
     window.addEventListener("resize", handleResize);
-    handleResize(); // Initial check
+    handleResize();
 
     return () => {
       window.removeEventListener("resize", handleResize);
