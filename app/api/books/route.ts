@@ -22,7 +22,7 @@ export async function GET(req: Request) {
     const response = await fetch(apiUrl);
     const data = await response.json();
     return NextResponse.json(data, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error fetching books", error);
     return NextResponse.json(
       { error: "Error fetching " + `${collection}` },
@@ -105,7 +105,7 @@ export async function POST(req: Request) {
       { message: "Book copied successfully" },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error copying book", error);
     return NextResponse.json({ error: "Error copying book" }, { status: 500 });
   }
@@ -148,7 +148,7 @@ export async function PUT(req: Request) {
       { message: "Book updated successfully" },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error updating book", error);
     return NextResponse.json({ error: "Error updating book" }, { status: 500 });
   }

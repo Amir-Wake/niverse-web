@@ -72,7 +72,6 @@ export default function Add() {
     e.preventDefault();
     let coverImageUrl = "";
     let fileUrl = "";
-    let coverDominantColor = "";
 
     const fileSequence = generateSequence(title);
 
@@ -143,7 +142,6 @@ export default function Add() {
       ageRate,
       publicationDate,
       coverImageUrl,
-      coverDominantColor,
       fileUrl,
       genre: genreArray,
       createdDate: new Date().toISOString(),

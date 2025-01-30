@@ -14,7 +14,7 @@ export async function GET() {
             data = data.filter(item => item !== "users");
         }
         return NextResponse.json(data, { status: 200 });
-    } catch (error: any) {
+    } catch (error) {
         console.error("There was an error fetching the collections!", error);
         return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
     }
