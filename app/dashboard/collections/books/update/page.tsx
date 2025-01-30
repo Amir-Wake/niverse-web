@@ -36,16 +36,15 @@ interface HandleChangeEvent
     | (HTMLTextAreaElement & { name: string; value: string });
 }
 
-export default function Update() {
+  function Update() {
   const [book, setBook] = useState<Book | null>(null);
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const storage = getStorage();
   const router = useRouter();
   const [user] = useAuthState(auth);
-  const searchParams = useSearchParams();
-  const collectionName = searchParams.get("collection");
-  const Id = searchParams.get("id");
+  const collectionName = useSearchParams().get("collection");
+  const Id = useSearchParams().get("id");
   const sessionStorageUser = sessionStorage.getItem("user");
 
   useEffect(() => {
@@ -178,7 +177,7 @@ export default function Update() {
   if (!user) return null;
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <>
       <div className="flex justify-between items-center p-3 border-b-2">
         <Button className="py-2 px-4 rounded" onClick={handleBack}>
           &#x25c0; {collectionName}
@@ -341,6 +340,14 @@ export default function Update() {
       </div>
       <br />
       <br />
+    </>
+  );
+}
+
+export default function UpdatePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Update />
     </Suspense>
   );
 }
