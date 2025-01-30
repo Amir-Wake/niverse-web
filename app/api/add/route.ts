@@ -20,8 +20,6 @@ export async function POST(req: Request) {
     if (!token) {
       throw new Error("Authorization token is required");
     }
-    console.log("Adding book", bookData.coverImageUrl);
-
     let coverDominantColor = null;
     const coverImageUrl = bookData.coverImageUrl;
     if (coverImageUrl) {
@@ -60,13 +58,6 @@ export async function POST(req: Request) {
                 }>;
               };
             }
-
-            interface GoogleVisionResponse {
-              responses: Array<{
-                imagePropertiesAnnotation: ImagePropertiesAnnotation;
-              }>;
-            }
-
             const highestPixelFractionColor = colors.reduce(
               (
                 prev: { pixelFraction: number },
