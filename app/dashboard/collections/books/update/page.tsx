@@ -4,7 +4,7 @@ import { auth } from "@/firebase/config";
 import { signOut } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { generateSequence } from "@/app/dashboard/utils/hash";
 
@@ -43,8 +43,9 @@ export default function Update() {
   const storage = getStorage();
   const router = useRouter();
   const [user] = useAuthState(auth);
-  const collectionName = useSearchParams().get("collection");
-  const Id = useSearchParams().get("id");
+  const searchParams = useSearchParams();
+  const collectionName = searchParams.get("collection");
+  const Id = searchParams.get("id");
   const sessionStorageUser = sessionStorage.getItem("user");
 
   useEffect(() => {
@@ -177,7 +178,7 @@ export default function Update() {
   if (!user) return null;
 
   return (
-    <>
+    <Suspense fallback={<div>Loading...</div>}>
       <div className="flex justify-between items-center p-3 border-b-2">
         <Button className="py-2 px-4 rounded" onClick={handleBack}>
           &#x25c0; {collectionName}
@@ -340,6 +341,6 @@ export default function Update() {
       </div>
       <br />
       <br />
-    </>
+    </Suspense>
   );
 }
