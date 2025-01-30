@@ -46,18 +46,6 @@ export async function POST(req: Request) {
           const colors =
             data.responses[0].imagePropertiesAnnotation.dominantColors.colors;
           if (colors.length > 0) {
-            interface ImagePropertiesAnnotation {
-              dominantColors: {
-                colors: Array<{
-                  color: {
-                    red: number;
-                    green: number;
-                    blue: number;
-                  };
-                  pixelFraction: number;
-                }>;
-              };
-            }
             const highestPixelFractionColor = colors.reduce(
               (
                 prev: { pixelFraction: number },
@@ -97,7 +85,7 @@ export async function POST(req: Request) {
       { message: "Book added successfully" },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error adding book", error);
     return NextResponse.json({ error: "Error adding book" }, { status: 500 });
   }

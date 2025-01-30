@@ -65,7 +65,7 @@ export async function DELETE(req: Request) {
       { message: "Book deleted successfully" },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error deleting book", error);
     return NextResponse.json({ error: "Error deleting book" }, { status: 500 });
   }

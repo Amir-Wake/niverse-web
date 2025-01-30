@@ -23,7 +23,6 @@ interface Book {
   genre: string | string[];
   fileUrl: string;
 }
-interface HandleSubmitEvent extends React.FormEvent<HTMLFormElement> {}
 
 interface UpdatedBookData extends Book {
   coverImageUrl: string;
@@ -94,7 +93,7 @@ export default function Update() {
     }
   };
 
-  const handleSubmit = async (e: HandleSubmitEvent): Promise<void> => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     if (!book) {
       console.error("Book data is not available");

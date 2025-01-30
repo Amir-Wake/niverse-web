@@ -203,8 +203,8 @@ export default function Home() {
           <div className="row gx-5 justify-content-center">
             <div className="col-xl-8">
               <div className="h2 fs-1 text-white mb-4">
-                "An intuitive solution to a common problem that we all face,
-                wrapped up in a single app!"
+                An intuitive solution to a common problem that we all face,
+                wrapped up in a single app!
               </div>{" "}
             </div>
           </div>
@@ -310,8 +310,8 @@ export default function Home() {
                 Enter a new age of reading
               </h2>
               <p className="lead fw-normal text-muted mb-5 mb-lg-0">
-                Discover the joy of reading with our app. Whether you're into
-                fiction, non-fiction, or anything in between, we've got you
+                Discover the joy of reading with our app. Whether you are into
+                fiction, non-fiction, or anything in between, we have got you
                 covered.
               </p>
             </div>

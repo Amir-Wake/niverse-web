@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { auth, getUserRole } from "@/firebase/config";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
-interface SigninEvent extends React.FormEvent<HTMLFormElement> {}
-
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,7 +21,7 @@ export default function Login() {
     return () => unsubscribe();
   }, [router]);
   
-  const signin = async (event: SigninEvent): Promise<void> => {
+  const signin = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     setLoading(true);
     setError("");
@@ -37,17 +35,17 @@ export default function Login() {
       }
       sessionStorage.setItem("user", "true");
       router.push("/dashboard/");
-    } catch (error: any) {
+    } catch (error) {
       if (
-        error.code === "auth/wrong-password" ||
-        error.code === "auth/user-not-found" ||
-        error.code === "auth/invalid-credential" ||
-        error.code === "auth/invalid-email" ||
-        error.code === "auth/user-disabled"
+        (error as { code: string }).code === "auth/wrong-password" ||
+        (error as { code: string }).code === "auth/user-not-found" ||
+        (error as { code: string }).code === "auth/invalid-credential" ||
+        (error as { code: string }).code === "auth/invalid-email" ||
+        (error as { code: string }).code === "auth/user-disabled"
       ) {
         setError("Email or password is incorrect");
       } else {
-        setError(error.message || "An unexpected error occurred");
+        setError((error as { message: string }).message || "An unexpected error occurred");
       }
     }
     setLoading(false);
