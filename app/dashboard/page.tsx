@@ -42,15 +42,20 @@ export default function Main() {
   return (
     <>
     <title>dashboard</title>
-      <div className="flex justify-end items-center text-center p-3 mb-20 border-b-2">
-        <Button
-          className="bg-red-500 text-white py-2 px-4 rounded"
+    <div className="flex justify-between items-center p-3 border-b-2 mb-10">
+        <div className="w-2/4">
+        <h2 className="text-center font-bold text-2xl">Dashboard</h2>
+        </div>
+        <div className="w-1/4 text-right">
+        <button
+          className="bg-red-500 text-white p-2 text-xl rounded"
           onClick={handleSignOut}
         >
           Sign Out
-        </Button>
+        </button>
+        </div>
       </div>
-      <h2 className="text-center mb-4 text-5xl p-2">Dashboard</h2>
+      <br />
       <div className="flex justify-center items-center">
         <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
           <div className="flex flex-col items-center">

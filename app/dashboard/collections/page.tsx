@@ -44,17 +44,23 @@ function Collections() {
   return (
     <>
       <title>dashboard</title>
-      <div className="flex justify-between items-center text-center p-3 mb-20 border-b-2">
-        <button className=" py-2 px-4 rounded text-xl" onClick={handleBack}>
-          &#x25c0; Dashboard
+      <div className="flex justify-between items-center p-3 border-b-2 mb-10">
+        <div className="w-1/4">
+        <button className=" p-2 text-2xl" onClick={handleBack}>
+        &lt; Back
         </button>
-        <h2 className="text-center font-bold text-2xl ">Collections</h2>
+        </div>
+        <div className="w-2/4">
+        <h2 className="text-center font-bold text-2xl">Collections</h2>
+        </div>
+        <div className="w-1/4 text-right">
         <button
-          className="bg-red-500 text-white py-2 px-4 rounded"
+          className="bg-red-500 text-white p-2 text-xl rounded"
           onClick={handleSignOut}
         >
           Sign Out
         </button>
+        </div>
       </div>
       <br />
       <div className="flex justify-center items-center">

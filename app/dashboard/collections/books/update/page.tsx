@@ -184,19 +184,23 @@ function Update() {
   return (
     <>
       <title>dashboard</title>
-      <div className="flex justify-between items-center p-3 border-b-2">
-        <Button className="py-2 px-4 text-xl rounded" onClick={handleBack}>
-          &#x25c0; {collectionName}
-        </Button>
-        <h2 className="text-center text-2xl font-bold ">
-          Update
-        </h2>
-        <Button
-          className="bg-red-500 text-white py-2 px-4 rounded"
+      <div className="flex justify-between items-center p-3 border-b-2 mb-10">
+        <div className="w-1/4">
+        <button className=" p-2 text-2xl" onClick={handleBack}>
+        &lt; Back
+        </button>
+        </div>
+        <div className="w-2/4">
+        <h2 className="text-center font-bold text-2xl">Update</h2>
+        </div>
+        <div className="w-1/4 text-right">
+        <button
+          className="bg-red-500 text-white p-2 text-xl rounded"
           onClick={handleSignOut}
         >
           Sign Out
-        </Button>
+        </button>
+        </div>
       </div>
       <br />
       <div className="container mx-auto">
