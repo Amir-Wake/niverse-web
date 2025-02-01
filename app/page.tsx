@@ -285,26 +285,7 @@ export default function Home() {
                       <stop className="gradient-end-color" offset="100%"></stop>
                     </linearGradient>
                   </defs>
-                  <circle cx="50" cy="50" r="50"></circle>
                 </svg>
-                <div className="device-wrapper">
-                  <div
-                    className="device"
-                    data-device="iPhoneX"
-                    data-orientation="portrait"
-                    data-color="black"
-                  >
-                    <div className="screen bg-black">
-                      <video
-                        autoPlay
-                        loop
-                        style={{ maxWidth: "100%", height: "100%" }}
-                      >
-                        <source src={demoScreen} type="video/mp4" />
-                      </video>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

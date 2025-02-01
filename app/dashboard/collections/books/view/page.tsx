@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "react-bootstrap";
 import { auth } from "@/firebase/config";
 import { signOut } from "firebase/auth";
 import React, { Suspense, useEffect, useState } from "react";
