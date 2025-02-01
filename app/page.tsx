@@ -5,6 +5,7 @@ import googlePlay from "@/public/google-play-badge.svg";
 import demoScreen from "@/public/demo-screen.mp4";
 import bgni from "@/public/bgni.png";
 import './styles.css';
+import iconTr from "@/public/iconTr.png";
 
 export default function Home() {
   const [isNavbarCollapsed, setIsNavbarCollapsed] = useState(true);
@@ -78,16 +79,21 @@ export default function Home() {
         style={{ backgroundColor: "rgba(255, 255, 255, 0.9)" }}
       >
         <div className="container px-5">
-          <a
-            className="navbar-brand fw-bold "
+            <a
+            className="navbar-brand fw-bold d-flex align-items-center"
             href="#page-top"
             onClick={() => {
               window.scrollTo({ top: 0, behavior: "smooth" });
               handleNavItemClick();
             }}
-          >
-            <h1 className="m-1 ">niVerse</h1>
-          </a>
+            >
+            <img
+              src={iconTr.src}
+              alt="niVerse Logo"
+              style={{ height: "4rem", marginRight: "0.5rem" }}
+            />
+            <h2 className="mt-3 text-orange-400">niVerse</h2>
+            </a>
           <button
             className="navbar-toggler"
             type="button"
@@ -122,7 +128,7 @@ export default function Home() {
             >
               <span className="d-flex align-items-center">
                 <i className="bi-chat-text-fill me-2"></i>
-                <span className="small">Send Feedback</span>
+                <span className="small ">Send Feedback</span>
               </span>
             </button>
           </div>
