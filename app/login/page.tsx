@@ -24,7 +24,7 @@ export default function Login() {
     });
     return () => unsubscribe();
   }, [router]);
-  
+
   const signin = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
     setLoading(true);
@@ -40,12 +40,13 @@ export default function Login() {
       sessionStorage.setItem("user", "true");
       router.push("/dashboard/");
     } catch (error) {
+      const errorCode = (error as { code: string }).code;
       if (
-        (error as { code: string }).code === "auth/wrong-password" ||
-        (error as { code: string }).code === "auth/user-not-found" ||
-        (error as { code: string }).code === "auth/invalid-credential" ||
-        (error as { code: string }).code === "auth/invalid-email" ||
-        (error as { code: string }).code === "auth/user-disabled"
+        errorCode === "auth/wrong-password" ||
+        errorCode === "auth/user-not-found" ||
+        errorCode === "auth/invalid-credential" ||
+        errorCode === "auth/invalid-email" ||
+        errorCode === "auth/user-disabled"
       ) {
         setError("Email or password is incorrect");
       } else {

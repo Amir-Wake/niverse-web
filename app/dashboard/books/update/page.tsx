@@ -9,6 +9,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { generateSequence } from "@/app/dashboard/utils/hash";
 
 interface Book {
+  collection: string;
   title: string;
   author: string;
   shortDescription: string;
@@ -29,6 +30,7 @@ interface UpdatedBookData extends Book {
   fileUrl: string;
   genre: string | string[];
 }
+
 interface HandleChangeEvent
   extends React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> {
   target:
@@ -43,7 +45,6 @@ function Update() {
   const storage = getStorage();
   const router = useRouter();
   const [user] = useAuthState(auth);
-  const collectionName = useSearchParams().get("collection");
   const Id = useSearchParams().get("id");
   let userSession: string | null = null;
 
@@ -59,7 +60,7 @@ function Update() {
   }, [user, router]);
 
   const fetchBooks = (): void => {
-    fetch(`/api/books?collection=${collectionName}&id=${Id}`)
+    fetch(`/api/books?id=${Id}`)
       .then((response) => response.json())
       .then((data) => {
         setBook(data);
@@ -140,7 +141,7 @@ function Update() {
 
     const token = await auth.currentUser?.getIdToken();
 
-    fetch(`/api/books?id=${Id}&collection=${collectionName}`, {
+    fetch(`/api/books?id=${Id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -155,9 +156,7 @@ function Update() {
         return response.json();
       })
       .then(() => {
-        router.push(
-          "/dashboard/collections/books?collection=" + collectionName
-        );
+        router.push("/dashboard/books");
       })
       .catch((error) => {
         console.error("Error updating book", error);
@@ -176,7 +175,7 @@ function Update() {
   };
 
   const handleBack = () => {
-    router.push("/dashboard/collections/books?collection=" + collectionName);
+    router.push("/dashboard/books");
   };
 
   if (!user) return null;
@@ -186,20 +185,20 @@ function Update() {
       <title>dashboard</title>
       <div className="flex justify-between items-center p-3 border-b-2 mb-10">
         <div className="w-1/4">
-        <button className=" p-2 text-2xl" onClick={handleBack}>
-        &lt; Back
-        </button>
+          <button className="p-2 text-2xl" onClick={handleBack}>
+            &lt; Back
+          </button>
         </div>
         <div className="w-2/4">
-        <h2 className="text-center font-bold text-2xl">Update</h2>
+          <h2 className="text-center font-bold text-2xl">Update</h2>
         </div>
         <div className="w-1/4 text-right">
-        <button
-          className="bg-red-500 text-white p-2 text-xl rounded"
-          onClick={handleSignOut}
-        >
-          Sign Out
-        </button>
+          <button
+            className="bg-red-500 text-white p-2 text-xl rounded"
+            onClick={handleSignOut}
+          >
+            Sign Out
+          </button>
         </div>
       </div>
       <br />
@@ -211,6 +210,17 @@ function Update() {
                 onSubmit={handleSubmit}
                 className="space-y-4 bg-white text-black p-3"
               >
+                <Form.Group id="collection">
+                  <Form.Label>Collection</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="collection"
+                    value={book.collection}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </Form.Group>
                 <Form.Group id="title">
                   <Form.Label>Title</Form.Label>
                   <Form.Control

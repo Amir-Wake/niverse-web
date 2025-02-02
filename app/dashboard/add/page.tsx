@@ -136,6 +136,7 @@ function Add() {
     const genreArray = genre.split(",").map((g) => g.trim().toLowerCase());
 
     const bookData = {
+      collection,
       title,
       author,
       shortDescription,
@@ -154,7 +155,7 @@ function Add() {
 
     const token = await auth.currentUser?.getIdToken();
 
-    fetch(`/api/add?collection=${collection}`, {
+    fetch(`/api/add`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -183,20 +184,20 @@ function Add() {
       <title>dashboard</title>
       <div className="flex justify-between items-center p-3 border-b-2 mb-10">
         <div className="w-1/4">
-        <button className=" p-2 text-2xl" onClick={handleBack}>
-        &lt; Back
-        </button>
+          <button className=" p-2 text-2xl" onClick={handleBack}>
+            &lt; Back
+          </button>
         </div>
         <div className="w-2/4">
-        <h2 className="text-center font-bold text-2xl">Add</h2>
+          <h2 className="text-center font-bold text-2xl">Add</h2>
         </div>
         <div className="w-1/4 text-right">
-        <button
-          className="bg-red-500 text-white p-2 text-xl rounded"
-          onClick={handleSignOut}
-        >
-          Sign Out
-        </button>
+          <button
+            className="bg-red-500 text-white p-2 text-xl rounded"
+            onClick={handleSignOut}
+          >
+            Sign Out
+          </button>
         </div>
       </div>
       <br />
@@ -351,16 +352,16 @@ function Add() {
                   type="submit"
                 >
                   Add Book
+                  {uploadProgress > 0 && (
+                    <ProgressBar
+                      now={uploadProgress}
+                      label={`${Math.round(uploadProgress)}%`}
+                      className="m-3"
+                    />
+                  )}
                 </Button>
               </div>
             </Form>
-            {uploadProgress > 0 && (
-              <ProgressBar
-                now={uploadProgress}
-                label={`${Math.round(uploadProgress)}%`}
-                className="mt-3"
-              />
-            )}
           </div>
         </div>
       </div>

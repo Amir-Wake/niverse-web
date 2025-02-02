@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const collection = new URL(req.url).searchParams.get("collection");
   const bookApi = process.env.NEXT_PUBLIC_BOOKS_API;
   const googleVisionApiUrl = process.env.NEXT_PUBLIC_GOOGLE_VISION_API_URL;
   const googleVisionApiKey = process.env.NEXT_PUBLIC_GOOGLE_VISION_API_KEY;
@@ -67,7 +66,7 @@ export async function POST(req: Request) {
       bookData.coverDominantColor = coverDominantColor;
     }
 
-    const apiUrl = `${bookApi}?collection=${collection}`;
+    const apiUrl = `${bookApi}`;
     const response = await fetch(apiUrl, {
       method: "POST",
       headers: {

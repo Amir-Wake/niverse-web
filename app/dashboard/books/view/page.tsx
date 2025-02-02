@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 interface Book {
+  collection: string;
   title: string;
   author: string;
   coverImageUrl: string;
@@ -19,11 +20,10 @@ interface Book {
   publicationDate: string;
 }
 
-  function View() {
+function View() {
   const [book, setBook] = useState<Book | null>(null);
   const router = useRouter();
   const [user] = useAuthState(auth);
-  const collectionName = useSearchParams().get("collection");
   const Id = useSearchParams().get("id");
   let userSession: string | null = null;
 
@@ -34,12 +34,13 @@ interface Book {
 
     if (!user && !userSession) {
       router.push("/login");
+    } else {
+      fetchBooks();
     }
-    fetchBooks();
   }, [user, router]);
 
   const fetchBooks = (): void => {
-    fetch(`/api/books?collection=${collectionName}&id=${Id}`)
+    fetch(`/api/books?id=${Id}`)
       .then((response) => response.json())
       .then((data) => {
         setBook(data);
@@ -61,7 +62,7 @@ interface Book {
   };
 
   const handleBack = () => {
-    router.push("/dashboard/collections/books?collection=" + collectionName);
+    router.push("/dashboard/books");
   };
 
   if (!user) return null;
@@ -71,20 +72,20 @@ interface Book {
       <title>dashboard</title>
       <div className="flex justify-between items-center p-3 border-b-2 mb-10">
         <div className="w-1/4">
-        <button className=" p-2 text-2xl" onClick={handleBack}>
-        &lt; Back
-        </button>
+          <button className="p-2 text-2xl" onClick={handleBack}>
+            &lt; Back
+          </button>
         </div>
         <div className="w-2/4">
-        <h2 className="text-center font-bold text-2xl">View</h2>
+          <h2 className="text-center font-bold text-2xl">View</h2>
         </div>
         <div className="w-1/4 text-right">
-        <button
-          className="bg-red-500 text-white p-2 text-xl rounded"
-          onClick={handleSignOut}
-        >
-          Sign Out
-        </button>
+          <button
+            className="bg-red-500 text-white p-2 text-xl rounded"
+            onClick={handleSignOut}
+          >
+            Sign Out
+          </button>
         </div>
       </div>
       <br />
@@ -100,6 +101,9 @@ interface Book {
               />
             </div>
             <div className="md:w-2/3 md:pl-6">
+              <p className="text-xl font-semibold mb-2 text-gray-900">
+                <strong>Collection:</strong> {book.collection}
+              </p>
               <p className="text-xl font-semibold mb-2 text-gray-900">
                 <strong>Title:</strong> {book.title}
               </p>

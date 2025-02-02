@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const collection = searchParams.get("collection");
   const search = searchParams.get("search");
   const id = searchParams.get("id");
   const bookApi = process.env.NEXT_PUBLIC_BOOKS_API;
@@ -12,20 +11,23 @@ export async function GET(req: Request) {
       throw new Error("API is not defined");
     }
 
-    let apiUrl = `${bookApi}?collection=${collection}`;
+    let apiUrl = `${bookApi}`;
     if (search) {
-      apiUrl += `&search=${search}`;
+      apiUrl += `?search=${search}`;
     }
     if (id) {
-      apiUrl = `${bookApi}${id}?collection=${collection}`;
+      apiUrl = `${bookApi}${id}`;
     }
     const response = await fetch(apiUrl);
+    if (!response.ok) {
+      throw new Error("Failed to fetch books");
+    }
     const data = await response.json();
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
     console.error("Error fetching books", error);
     return NextResponse.json(
-      { error: "Error fetching " + `${collection}` },
+      { error: "Error fetching books" },
       { status: 500 }
     );
   }
@@ -33,7 +35,6 @@ export async function GET(req: Request) {
 
 export async function DELETE(req: Request) {
   const { searchParams } = new URL(req.url);
-  const collection = searchParams.get("collection");
   const id = searchParams.get("id");
   const token = req.headers.get("Authorization")?.split(" ")[1];
   const bookApi = process.env.NEXT_PUBLIC_BOOKS_API;
@@ -49,7 +50,7 @@ export async function DELETE(req: Request) {
       throw new Error("Authorization token is required");
     }
 
-    const apiUrl = `${bookApi}${id}?collection=${collection}`;
+    const apiUrl = `${bookApi}${id}`;
     const response = await fetch(apiUrl, {
       method: "DELETE",
       headers: {
@@ -113,7 +114,6 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
   const { searchParams } = new URL(req.url);
-  const collection = searchParams.get("collection");
   const id = searchParams.get("id");
   const token = req.headers.get("Authorization")?.split(" ")[1];
   const bookApi = process.env.NEXT_PUBLIC_BOOKS_API;
@@ -130,7 +130,7 @@ export async function PUT(req: Request) {
       throw new Error("Authorization token is required");
     }
 
-    const apiUrl = `${bookApi}${id}?collection=${collection}`;
+    const apiUrl = `${bookApi}${id}`;
     const response = await fetch(apiUrl, {
       method: "PUT",
       headers: {

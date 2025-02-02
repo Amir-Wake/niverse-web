@@ -3,7 +3,7 @@ import { Button } from "react-bootstrap";
 import { auth } from "@/firebase/config";
 import { signOut } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { FaSearch } from "react-icons/fa";
@@ -17,14 +17,10 @@ function Books() {
   const [books, setBooks] = useState<Book[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
-  const collectionName = useSearchParams().get("collection");
   const [user] = useAuthState(auth);
-  let userSession: string | null = null;
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      userSession = sessionStorage.getItem("user");
-    }
+    const userSession = typeof window !== "undefined" ? sessionStorage.getItem("user") : null;
 
     if (!user && !userSession) {
       router.push("/login");
@@ -36,8 +32,8 @@ function Books() {
   }, [searchTerm]);
 
   const fetchBooks = (search: string): void => {
-    const searchQuery = search ? `&search=${search}` : "";
-    fetch(`/api/books?collection=${collectionName}${searchQuery}`)
+    const searchQuery = search ? `search=${search}` : "";
+    fetch(`/api/books?${searchQuery}`)
       .then((response) => response.json())
       .then((data) => {
         setBooks(data);
@@ -59,7 +55,7 @@ function Books() {
   };
 
   const handleBack = () => {
-    router.push("/dashboard/collections");
+    router.push("/dashboard");
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -67,15 +63,13 @@ function Books() {
   };
 
   const handleEdit = (bookId: string) => {
-    router.push(
-      `/dashboard/collections/books/update?collection=${collectionName}&id=${bookId}`
-    );
+    router.push(`/dashboard/books/update?id=${bookId}`);
   };
 
   const handleDelete = async (bookId: string) => {
     const token = await auth.currentUser?.getIdToken();
     if (window.confirm("Are you sure you want to delete this book?")) {
-      fetch(`/api/books?id=${bookId}&collection=${collectionName}`, {
+      fetch(`/api/books?id=${bookId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -91,9 +85,7 @@ function Books() {
   };
 
   const handleCopy = (bookId: string) => {
-    const collectionToCopy = prompt(
-      "Enter the collection to copy the book to:"
-    );
+    const collectionToCopy = prompt("Enter the collection to copy the book to:");
     if (collectionToCopy) {
       fetch(`/api/books`, {
         method: "POST",
@@ -101,7 +93,7 @@ function Books() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          sourceCollection: collectionName,
+          sourceCollection: "books",
           destinationCollection: collectionToCopy,
           documentId: bookId,
         }),
@@ -122,20 +114,20 @@ function Books() {
       <title>dashboard</title>
       <div className="flex justify-between items-center p-3 border-b-2 mb-10">
         <div className="w-1/4">
-        <button className=" p-2 text-2xl" onClick={handleBack}>
-        &lt; Back
-        </button>
+          <button className="p-2 text-2xl" onClick={handleBack}>
+            &lt; Back
+          </button>
         </div>
         <div className="w-2/4">
-        <h2 className="text-center font-bold text-2xl">{collectionName}</h2>
+          <h2 className="text-center font-bold text-2xl">Books</h2>
         </div>
         <div className="w-1/4 text-right">
-        <button
-          className="bg-red-500 text-white p-2 text-xl rounded"
-          onClick={handleSignOut}
-        >
-          Sign Out
-        </button>
+          <button
+            className="bg-red-500 text-white p-2 text-xl rounded"
+            onClick={handleSignOut}
+          >
+            Sign Out
+          </button>
         </div>
       </div>
       <br />
@@ -159,7 +151,7 @@ function Books() {
                 className="mb-2 p-2 border border-gray-300"
               >
                 <Link
-                  href={`/dashboard/collections/books/view?collection=${collectionName}&id=${book.id}`}
+                  href={`/dashboard/books/view?id=${book.id}`}
                   className="no-underline text-lg"
                 >
                   {book.title}

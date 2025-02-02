@@ -32,7 +32,7 @@ export default function Main() {
   };
 
   const handleMove = () => {
-    router.push("/dashboard/collections");
+    router.push("/dashboard/books");
   };
 
   if (!user) {
@@ -41,18 +41,18 @@ export default function Main() {
 
   return (
     <>
-    <title>dashboard</title>
-    <div className="flex justify-between items-center p-3 border-b-2 mb-10">
+      <title>dashboard</title>
+      <div className="flex justify-between items-center p-3 border-b-2 mb-10">
         <div className="w-2/4">
-        <h2 className="text-center font-bold text-2xl">Dashboard</h2>
+          <h2 className="text-center font-bold text-2xl">Dashboard</h2>
         </div>
         <div className="w-1/4 text-right">
-        <button
-          className="bg-red-500 text-white p-2 text-xl rounded"
-          onClick={handleSignOut}
-        >
-          Sign Out
-        </button>
+          <button
+            className="bg-red-500 text-white p-2 text-xl rounded"
+            onClick={handleSignOut}
+          >
+            Sign Out
+          </button>
         </div>
       </div>
       <br />
@@ -63,7 +63,7 @@ export default function Main() {
               className="w-full text-black mt-3 flex items-center justify-center rounded-md border border-gray-600 text-2xl p-6"
               onClick={handleMove}
             >
-              <FaBook className="mr-2" /> Collections
+              <FaBook className="mr-2" /> Books
             </Button>
             <Button
               className="w-full mt-3 text-black flex items-center justify-center rounded-md border border-gray-600 text-2xl p-6"
