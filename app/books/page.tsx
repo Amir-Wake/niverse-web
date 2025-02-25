@@ -1,5 +1,4 @@
 "use client";
-import { useRouter } from "next/navigation";
 import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { FaSearch } from "react-icons/fa";

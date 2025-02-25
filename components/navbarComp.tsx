@@ -1,5 +1,6 @@
 import React from "react";
 import iconTr from "@/public/iconTr.png";
+import Link from "next/link";
 
 interface NavbarCompProps {
     isNavbarCollapsed: boolean;
@@ -12,7 +13,7 @@ function NavbarComp({ isNavbarCollapsed, handleNavbarToggle, handleNavItemClick 
     return (
         <nav className="navbar navbar-expand-lg fixed-top bg-white flex" style={{height:"80px"}} id="mainNav">
             <div className="container px-5 bg-white border-gray-400 border-b-2">
-                <a
+                <Link
                     className="navbar-brand fw-bold flex items-center"
                     href="/"
                     onClick={() => {
@@ -21,7 +22,7 @@ function NavbarComp({ isNavbarCollapsed, handleNavbarToggle, handleNavItemClick 
                 >
                     <img src={iconTr.src} alt="niverse Logo" className="h-16 mr-2" />
                     <h2 className="mt-3 text-red-500">Niverse</h2>
-                </a>
+                </Link>
                 <button
                     className="navbar-toggler border-red-500 border-2"
                     type="button"
@@ -36,19 +37,19 @@ function NavbarComp({ isNavbarCollapsed, handleNavbarToggle, handleNavItemClick 
                 <div className={` navbar-collapse ${isNavbarCollapsed ? "collapse" : "show"}`} id="navbarResponsive">
                     <ul className="navbar-nav ms-auto me-4 my-3 my-lg-0">
                     <li className="nav-item">
-                            <a className="nav-link me-lg-3 text-lg text-black" href="/" onClick={handleNavItemClick}>
+                            <Link className="nav-link me-lg-3 text-lg text-black" href="/" onClick={handleNavItemClick}>
                                 Home
-                            </a>
+                            </Link>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link me-lg-3 text-lg text-black" href="/books" onClick={handleNavItemClick}>
+                            <Link className="nav-link me-lg-3 text-lg text-black" href="/books" onClick={handleNavItemClick}>
                                 Books
-                            </a>
+                            </Link>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link me-lg-3 text-lg text-black" href="/about" onClick={handleNavItemClick}>
+                            <Link className="nav-link me-lg-3 text-lg text-black" href="/about" onClick={handleNavItemClick}>
                                 About
-                            </a>
+                            </Link>
                         </li>
 
                     </ul>
