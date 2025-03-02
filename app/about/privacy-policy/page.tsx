@@ -40,7 +40,7 @@ const PrivacyPolicyPage: React.FC = () => {
                         <p className='text-lg'>The Service Provider does not use the Application to knowingly solicit data from or market to children under the age of 13. If you are a parent or guardian and you are aware that your child has provided us with personal information, please contact the Service Provider (Amir19225@outlook.com) so that they will be able to take the necessary actions.</p>
                     </li>
                 </ol>
-                <p className='mt-6 text-lg'>We are committed to safeguarding your personal data and providing you with a safe and enjoyable app experience. If you have any questions or concerns about this privacy policy, feel free to contact us at Amir19225@outlook.com. Your trust is important to us, and we’ll continue to work hard to earn it.</p>
+                <p className='mt-6 text-lg'>We are committed to safeguarding your personal data and providing you with a safe and enjoyable app experience. If you have any questions or concerns about this privacy policy, feel free to contact us at Support@niverses.com. Your trust is important to us, and we’ll continue to work hard to earn it.</p>
                 <p className='mt-6 text-lg'>This privacy policy is effective as of 2025-02-25. By using the Application, you are consenting to the processing of your information as set forth in this Privacy Policy now and as amended by us.</p>
             </div>
         </div>
