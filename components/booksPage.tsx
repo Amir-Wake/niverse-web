@@ -1,7 +1,6 @@
 "use client";
 import React, { Suspense, useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.css";
-import "react-multi-carousel/lib/styles.css";
 import "./booksPage.css";
 
 interface Book {
