@@ -39,7 +39,7 @@ export default function Home() {
               style={{ width: "150px", height: "45px" }}
             />
           </a>
-          <p className="text-lg p-1 text-center text-red-400">Coming soon...</p>
+          <p className="text-lg p-1 text-center text-white">Coming soon...</p>
             </div>
             <div className="flex-col items-center">
           <a
