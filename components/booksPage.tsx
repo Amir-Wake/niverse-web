@@ -1,29 +1,10 @@
 "use client";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense } from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import "./booksPage.css";
+import {books} from "./books";
 
-interface Book {
-  id: string;
-  title: string;
-  coverImageUrl: string;
-}
-
-function Books() {
-  const [books, setBooks] = useState<Book[]>([]);
-  const allBooksApi = `${process.env.NEXT_PUBLIC_NEWBOOKS_API}`;
-  useEffect(() => {
-    try {
-      fetch(allBooksApi)
-        .then((response) => response.json())
-        .then((data) => {
-          setBooks(data);
-        });
-    } catch (error) {
-      console.error("Error fetching books", error);
-    }
-  }, []);
-
+function Books() {  
   return (
     <>
       <div style={{background: "linear-gradient(to bottom, white, white,black)"}}>
@@ -40,7 +21,7 @@ function Books() {
                 <div className="no-underline text-lg text-black">
                   <div className="w-48 h-80 mx-auto border-1 border-gray-300 rounded-md">
                     <img
-                      src={book.coverImageUrl}
+                      src={book.src}
                       alt="Cover"
                       className="object-cover w-full h-full rounded-md"
                     />
