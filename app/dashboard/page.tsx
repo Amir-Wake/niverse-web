@@ -48,7 +48,7 @@ export default function Main() {
         </div>
         <div className="w-1/4 text-right">
           <button
-            className="bg-red-500 text-white p-2 text-xl rounded"
+            className="bg-red-500 text-white p-1 text-l rounded"
             onClick={handleSignOut}
           >
             Sign Out
