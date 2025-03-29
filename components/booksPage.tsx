@@ -11,10 +11,9 @@ interface Book {
 
 function Books() {
   const [books, setBooks] = useState<Book[]>([]);
-  const allBooksApi = `${process.env.NEXT_PUBLIC_NEWBOOKS_API}`;
   useEffect(() => {
     try {
-      fetch(allBooksApi)
+      fetch('api/newBooks')
         .then((response) => response.json())
         .then((data) => {
           setBooks(data);
