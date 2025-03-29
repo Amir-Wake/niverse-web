@@ -21,6 +21,7 @@ interface Book {
   publisher: string;
   publicationDate: string;
   coverImageUrl: string;
+  coverDominantColor: string;
   genre: string | string[];
   fileUrl: string;
 }
@@ -45,7 +46,7 @@ function Update() {
   const storage = getStorage();
   const router = useRouter();
   const [user] = useAuthState(auth);
-  const Id = useSearchParams().get("id");
+  const Id = useSearchParams()?.get("id") ?? "";
   let userSession: string | null = null;
 
   useEffect(() => {
@@ -256,6 +257,16 @@ function Update() {
                     className="w-full px-3 py-2 border rounded"
                   />
                 </Form.Group>
+                <Form.Group id="coverDominantColor">
+                  <Form.Label>Cover Colour</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="coverDominantColor"
+                    value={book.coverDominantColor}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </Form.Group>
                 <Form.Group id="shortDescription" className="mt-3">
                   <Form.Label>Short Description</Form.Label>
                   <Form.Control
@@ -287,7 +298,6 @@ function Update() {
                     name="genre"
                     value={book.genre}
                     onChange={handleChange}
-                    required
                     className="w-full px-3 py-2 border rounded"
                   />
                 </Form.Group>

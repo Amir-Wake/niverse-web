@@ -25,6 +25,7 @@ function Add() {
   const [translator, setTranslator] = useState("");
   const [publicationDate, setPublicationDate] = useState("");
   const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [coverDominantColor, setCoverDominantColor] = useState("");
   const [epubFile, setEpubFile] = useState<File | null>(null);
   const [genre, setGenre] = useState("");
   const [collection, setCollection] = useState("");
@@ -148,6 +149,7 @@ function Add() {
       ageRate,
       publicationDate,
       coverImageUrl,
+      coverDominantColor,
       fileUrl,
       genre: genreArray,
       createdDate: new Date().toISOString(),
@@ -214,12 +216,12 @@ function Add() {
                   type="text"
                   value={collection}
                   onChange={(e) => setCollection(e.target.value)}
-                  required
+                  // required
                   className="w-full px-3 py-2 border rounded"
                 />
               </Form.Group>
               <Form.Group id="title">
-                <Form.Label>Title</Form.Label>
+                <Form.Label>Title*</Form.Label>
                 <Form.Control
                   type="text"
                   value={title}
@@ -229,7 +231,7 @@ function Add() {
                 />
               </Form.Group>
               <Form.Group id="author">
-                <Form.Label>Author</Form.Label>
+                <Form.Label>Author*</Form.Label>
                 <Form.Control
                   type="text"
                   value={author}
@@ -245,7 +247,7 @@ function Add() {
                   rows={3}
                   value={shortDescription}
                   onChange={(e) => setShortDescription(e.target.value)}
-                  required
+                  // required
                   className="w-full px-3 py-2 border rounded"
                 />
               </Form.Group>
@@ -256,7 +258,7 @@ function Add() {
                   rows={3}
                   value={longDescription}
                   onChange={(e) => setLongDescription(e.target.value)}
-                  required
+                  // required
                   className="w-full px-3 py-2 border rounded"
                 />
               </Form.Group>
@@ -266,7 +268,7 @@ function Add() {
                   type="text"
                   value={genre}
                   onChange={(e) => setGenre(e.target.value)}
-                  required
+                  // required
                   className="w-full px-3 py-2 border rounded"
                 />
               </Form.Group>
@@ -276,12 +278,11 @@ function Add() {
                   type="text"
                   value={printLength}
                   onChange={(e) => setPrintLength(e.target.value)}
-                  required
                   className="w-full px-3 py-2 border rounded"
                 />
               </Form.Group>
               <Form.Group id="ageRate" className="mt-3">
-                <Form.Label>Age Rating</Form.Label>
+                <Form.Label>Age Rating*</Form.Label>
                 <Form.Control
                   type="text"
                   value={ageRate}
@@ -291,7 +292,7 @@ function Add() {
                 />
               </Form.Group>
               <Form.Group id="language" className="mt-3">
-                <Form.Label>Language</Form.Label>
+                <Form.Label>Language*</Form.Label>
                 <Form.Control
                   type="text"
                   value={language}
@@ -306,7 +307,6 @@ function Add() {
                   type="text"
                   value={publisher}
                   onChange={(e) => setPublisher(e.target.value)}
-                  required
                   className="w-full px-3 py-2 border rounded"
                 />
               </Form.Group>
@@ -325,16 +325,24 @@ function Add() {
                   type="date"
                   value={publicationDate}
                   onChange={(e) => setPublicationDate(e.target.value)}
-                  required
                   className="w-full px-3 py-2 border rounded"
                 />
               </Form.Group>
               <Form.Group id="coverImage" className="mt-3">
-                <Form.Label>Cover Image</Form.Label>
+                <Form.Label>Cover Image*</Form.Label>
                 <Form.Control
                   required
                   type="file"
                   onChange={handleImageChange}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </Form.Group>
+              <Form.Group id="coverDominantColor" className="mt-3">
+                <Form.Label>Cover Colour</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={coverDominantColor}
+                  onChange={(e) => setCoverDominantColor(e.target.value)}
                   className="w-full px-3 py-2 border rounded"
                 />
               </Form.Group>

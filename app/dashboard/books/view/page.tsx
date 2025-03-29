@@ -24,7 +24,7 @@ function View() {
   const [book, setBook] = useState<Book | null>(null);
   const router = useRouter();
   const [user] = useAuthState(auth);
-  const Id = useSearchParams().get("id");
+  const Id = useSearchParams()?.get("id") ?? "";
   let userSession: string | null = null;
 
   useEffect(() => {

@@ -1,10 +1,7 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import NavbarComp from "@/components/navbarComp";
+import React from "react";
 import "bootstrap/dist/css/bootstrap.css";
 
 export default function About() {
-  const [isNavbarCollapsed, setIsNavbarCollapsed] = useState(true);
   const [result, setResult] = React.useState("");
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -28,76 +25,34 @@ export default function About() {
       setResult(data.message);
     }
   };
-  const handleNavbarToggle = () => {
-    setIsNavbarCollapsed(!isNavbarCollapsed);
-  };
-
-  const handleNavItemClick = () => {
-    if (window.innerWidth < 992) {
-      setIsNavbarCollapsed(true);
-    }
-  };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 50 && window.innerWidth < 992) {
-        setIsNavbarCollapsed(true);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 992) {
-        setIsNavbarCollapsed(false);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    handleResize();
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   return (
-    <div>
-      <NavbarComp
-        isNavbarCollapsed={isNavbarCollapsed}
-        handleNavbarToggle={handleNavbarToggle}
-        handleNavItemClick={handleNavItemClick}
-      />
-      <div className="container px-5 mt-5 pt-5">
+    <div style={{ background: "linear-gradient(to bottom, grey, white)" }}>
+      <div className="container px-5 pt-5" >
         <div className="row gx-5 align-items-center">
           <div className="col-lg-6">
             <div className="mb-5 mb-lg-0 text-center text-lg-start">
               <h1 className="display-1 lh-1 mb-3">About Us</h1>
-              <p className="lead fw-normal text-muted mb-5">
-                We are passionate about books and dedicated to helping you
-                discover your next great read. Our app offers a vast collection
-                of books across various genres, ensuring there is something for
-                everyone.
-              </p>
-              <p className="lead fw-normal text-muted mb-5">
-                Join our community of book lovers and start exploring today!
-              </p>
+                <p className="lead fw-normal text-muted mb-5">
+                We are a volunteer-driven project, passionate about preserving and presenting books in the best way possible. 
+                Using the latest technology, we strive to make a vast collection of books accessible to everyone.
+                </p>
+                <p className="lead fw-normal text-muted mb-5">
+                If you share our passion and want to be part of this journey, we would love to hear from you. 
+                Contact us and join our community today!
+                </p>
             </div>
           </div>
           <div className="col-lg-6">
-            <h1 className="display-1 lh-1 mb-3">Contact Us</h1>
-            <p className="lead fw-normal text-muted mb-5">
-              Have a question or feedback? We would love to hear from you! Fill out
-              the form below, and we will get back to you as soon as possible.
+            <h1 className="display-1 lh-1 mb-3 text-center">Contact Us</h1>
+            <p className="lead fw-normal text-muted mb-4">
+              Have questions, feedback, or want to share a book? 
+              Fill out the form below, and our team will get back to you as soon as possible. 
+              We look forward to hearing from you!
             </p>
             <form onSubmit={onSubmit}>
               <div className="mb-3">
-                <label htmlFor="name" className="form-label">
+                <label id="name" className="form-label">
                   Name
                 </label>
                 <input
@@ -108,7 +63,7 @@ export default function About() {
                 />
               </div>
               <div className="mb-3">
-                <label htmlFor="email" className="form-label">
+                <label id="email" className="form-label">
                   Email
                 </label>
                 <input
@@ -119,7 +74,7 @@ export default function About() {
                 />
               </div>
               <div className="mb-3">
-                <label htmlFor="message" className="form-label">
+                <label id="message" className="form-label">
                   Message
                 </label>
                 <textarea
