@@ -13,7 +13,7 @@ import iPad4 from "@/public/iPad-4.png";
 export default function Home() {
   return (
     <div>
-      <title>Niverse</title>
+      <title>Nverse</title>
       <div
         className="px-5 pt-2"
         style={{
@@ -43,7 +43,7 @@ export default function Home() {
             </div>
             <div className="flex-col items-center">
           <a
-            href="https://apps.apple.com/gb/app/niverse/id6742115218"
+            href="https://apps.apple.com/app/nverse/id6742115218"
             className="w-50"
           >
             <img
@@ -106,7 +106,7 @@ export default function Home() {
         <div className="container text-center">
           <div className="row">
         <div className="col-md-3">
-          <p className="mb-0">© 2025 Niverse</p>
+          <p className="mb-0">© 2025 Nverse</p>
         </div>
         <div className="col-md-3">
           <p className="mb-0">All Rights Reserved</p>
