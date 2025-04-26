@@ -30,6 +30,15 @@ const PrivacyPolicyPage: React.FC = () => {
                         <p className='text-lg'>The Service Provider may use the information you provided to contact you from time to time to provide you with important information, required notices, and marketing promotions.</p>
                     </li>
                     <li>
+                        <div className='text-xl font-bold mb-2'>Camera Permission</div>
+                        <p className='text-lg'>The app may request access to your device’s camera to personalize your account, such as setting a profile photo. This is completely optional, and users can use the app without granting camera access.</p>
+                    </li>
+                    <li>
+                        <div className='text-xl font-bold mb-2'>Delte Account</div>
+                        <p className='text-lg'>You can delete your account at any time. This will remove all your personal data from our servers. Please note that this action is irreversible, and all your data will be permanently deleted.</p>
+                        <p className='text-lg'>To delete your account, please open the app, go to Profile &gt; Privacy Policy &gt; Delete Account. Deletion is immediate and permanent.</p>
+                    </li>
+                    <li>
                         <div className='text-xl font-bold mb-2'>Data Protection</div>
                         <p className='text-lg'>We make every effort to protect your data using strong security measures through our cloud services. However, please understand that no method of internet communication is 100% secure, and while we strive to protect your privacy, absolute security cannot be guaranteed.</p>
                         <p className='text-lg'>The Service Provider provides physical, electronic, and procedural safeguards to protect information the Service Provider processes and maintains.</p>
