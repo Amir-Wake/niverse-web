@@ -66,6 +66,12 @@ export default function Main() {
               <FaBook className="mr-2" /> Books
             </Button>
             <Button
+              className="w-full text-black mt-3 flex items-center justify-center rounded-md border border-gray-600 text-2xl p-6"
+              onClick={()=> router.push("/dashboard/authors")}
+            >
+              <FaBook className="mr-2" /> Authors
+            </Button>
+            <Button
               className="w-full mt-3 text-black flex items-center justify-center rounded-md border border-gray-600 text-2xl p-6"
               onClick={handleAddBook}
             >
