@@ -12,7 +12,7 @@ export async function GET() {
 
     const response = await fetch(apiUrl);
     if (!response.ok) {
-      throw new Error("Failed to fetch authors");
+      throw new Error(`Failed to fetch authors from ${apiUrl}`);
     }
     const data = await response.json();
     return NextResponse.json(data, { status: 200 });
