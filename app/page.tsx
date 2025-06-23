@@ -31,7 +31,7 @@ export default function Home() {
             </p>
           <div className="flex flex-col lg:flex-row items-center mb-2 gap-3">
             <div className="flex-col items-center">
-          <a href="#" className="w-50">
+          <a href="https://play.google.com/store/apps/details?id=com.amir19225.ebookdv1" className="w-50">
             <img
               className="app-badge"
               src={googlePlay.src}
@@ -39,7 +39,7 @@ export default function Home() {
               style={{ width: "150px", height: "45px" }}
             />
           </a>
-          <p className="text-lg p-1 text-center text-white">Coming soon...</p>
+          <p className="text-lg p-1 text-center text-green-500">Available</p>
             </div>
             <div className="flex-col items-center">
           <a
