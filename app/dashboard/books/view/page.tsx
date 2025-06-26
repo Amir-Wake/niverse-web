@@ -18,6 +18,10 @@ interface Book {
   translator: string;
   publisher: string;
   publicationDate: string;
+  createdDate: string;
+  downloadedNumber: number;
+  wantToReadNumber: number;
+  id: string;
 }
 
 function View() {
@@ -102,6 +106,9 @@ function View() {
             </div>
             <div className="md:w-2/3 md:pl-6">
               <p className="text-xl font-semibold mb-2 text-gray-900">
+                <strong>Id:</strong> {book.id}
+              </p>
+              <p className="text-xl font-semibold mb-2 text-gray-900">
                 <strong>Collection:</strong> {book.collection}
               </p>
               <p className="text-xl font-semibold mb-2 text-gray-900">
@@ -133,6 +140,15 @@ function View() {
               </p>
               <p className="text-lg mb-2 text-gray-900">
                 <strong>Publication Date:</strong> {book.publicationDate}
+              </p>
+              <p className="text-lg mb-2 text-gray-900">
+                <strong>Created Date:</strong> {book.createdDate}
+              </p>
+              <p className="text-lg mb-2 text-gray-900">
+                <strong>Downloaded Number:</strong> {book.downloadedNumber}
+              </p>
+              <p className="text-lg mb-2 text-gray-900">
+                <strong>Want to Read Number:</strong> {book.wantToReadNumber||0}
               </p>
             </div>
           </div>
