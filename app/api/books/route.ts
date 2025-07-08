@@ -5,7 +5,6 @@ export async function GET(req: Request) {
   const search = searchParams.get("search");
   const id = searchParams.get("id");
   const bookApi = process.env.NEXT_PUBLIC_BOOKS_API;
-
   try {
     if (!bookApi) {
       throw new Error("API is not defined");

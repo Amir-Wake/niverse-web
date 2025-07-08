@@ -4,6 +4,20 @@ import { signOut } from "firebase/auth";
 import React, { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { 
+  FaArrowLeft, 
+  FaBook, 
+  FaUser, 
+  FaCalendar, 
+  FaLanguage, 
+  FaDownload, 
+  FaHeart,
+  FaEdit,
+  FaTrash,
+  FaTags,
+  FaBuilding,
+  FaFileAlt
+} from "react-icons/fa";
 
 interface Book {
   collection: string;
@@ -69,102 +83,239 @@ function View() {
     router.push("/dashboard/books");
   };
 
+  const handleEdit = () => {
+    router.push(`/dashboard/books/update?id=${Id}`);
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this book? This action cannot be undone.")) {
+      const token = await auth.currentUser?.getIdToken();
+      fetch(`/api/books?id=${Id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then(() => {
+          router.push("/dashboard/books");
+        })
+        .catch((error) => {
+          console.error("Error deleting book", error);
+        });
+    }
+  };
+
   if (!user) return null;
 
   return (
-    <>
-      <title>dashboard</title>
-      <div className="flex justify-between items-center p-3 border-b-2 mb-10">
-        <div className="w-1/4">
-          <button className="p-2 text-2xl" onClick={handleBack}>
-            &lt; Back
-          </button>
-        </div>
-        <div className="w-2/4">
-          <h2 className="text-center font-bold text-2xl">View</h2>
-        </div>
-        <div className="w-1/4 text-right">
-          <button
-            className="bg-red-500 text-white p-1 text-l rounded"
-            onClick={handleSignOut}
-          >
-            Sign Out
-          </button>
-        </div>
-      </div>
-      <br />
-
-      {book ? (
-        <div className="max-w-4xl mx-auto p-4 bg-white shadow-md rounded-lg">
-          <div className="flex flex-col md:flex-row">
-            <div className="md:w-1/3">
-              <img
-                src={book.coverImageUrl}
-                alt={book.title}
-                className="w-auto h-auto rounded-lg"
-              />
+    <div className="min-h-screen bg-gray-50">
+      <title>Book Details - Nverse Dashboard</title>
+      
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-4">
+              <button 
+                onClick={handleBack}
+                className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <FaArrowLeft className="mr-2" />
+                Back to Books
+              </button>
+              <div className="h-6 w-px bg-gray-300"></div>
+              <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+                <FaBook className="mr-3 text-blue-600" />
+                Book Details
+              </h1>
             </div>
-            <div className="md:w-2/3 md:pl-6">
-              <p className="text-xl font-semibold mb-2 text-gray-900">
-                <strong>Id:</strong> {book.id}
-              </p>
-              <p className="text-xl font-semibold mb-2 text-gray-900">
-                <strong>Collection:</strong> {book.collection}
-              </p>
-              <p className="text-xl font-semibold mb-2 text-gray-900">
-                <strong>Title:</strong> {book.title}
-              </p>
-              <p className="text-lg mb-2 text-gray-900">
-                <strong>Author:</strong> {book.author}
-              </p>
-              <p className="text-lg mb-2 text-gray-900">
-                <strong>Short Description:</strong> {book.shortDescription}
-              </p>
-              <p className="text-lg mb-2 text-gray-900">
-                <strong>Long Description:</strong> {book.longDescription}
-              </p>
-              <p className="text-lg mb-2 text-gray-900">
-                <strong>Genre:</strong> {book.genre.join(", ")}
-              </p>
-              <p className="text-lg mb-2 text-gray-900">
-                <strong>Print Length:</strong> {book.printLength}
-              </p>
-              <p className="text-lg mb-2 text-gray-900">
-                <strong>Language:</strong> {book.language}
-              </p>
-              <p className="text-lg mb-2 text-gray-900">
-                <strong>Translator:</strong> {book.translator}
-              </p>
-              <p className="text-lg mb-2 text-gray-900">
-                <strong>Publisher:</strong> {book.publisher}
-              </p>
-              <p className="text-lg mb-2 text-gray-900">
-                <strong>Publication Date:</strong> {book.publicationDate}
-              </p>
-              <p className="text-lg mb-2 text-gray-900">
-                <strong>Created Date:</strong> {book.createdDate}
-              </p>
-              <p className="text-lg mb-2 text-gray-900">
-                <strong>Downloaded Number:</strong> {book.downloadedNumber}
-              </p>
-              <p className="text-lg mb-2 text-gray-900">
-                <strong>Want to Read Number:</strong> {book.wantToReadNumber||0}
-              </p>
+            <div className="flex items-center space-x-3">
+              {book && (
+                <>
+                  <button
+                    onClick={handleEdit}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors"
+                  >
+                    <FaEdit className="mr-2" />
+                    Edit Book
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center transition-colors"
+                  >
+                    <FaTrash className="mr-2" />
+                    Delete
+                  </button>
+                </>
+              )}
+              <button
+                onClick={handleSignOut}
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
+              >
+                Sign Out
+              </button>
             </div>
           </div>
         </div>
-      ) : (
-        <p className="text-center text-lg text-gray-900">Loading...</p>
-      )}
-      <br />
-      <br />
-    </>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-6 py-8">
+        {book ? (
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Book Cover */}
+            <div className="lg:col-span-1">
+              <div className="bg-white rounded-lg shadow-sm p-6 sticky top-8">
+                <div className="aspect-[3/4] relative mb-6">
+                  <img
+                    src={book.coverImageUrl}
+                    alt={book.title}
+                    className="w-full h-full object-cover rounded-lg shadow-lg"
+                  />
+                </div>
+                
+                {/* Quick Stats */}
+                <div className="grid grid-cols-2 gap-4 text-center">
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <FaDownload className="mx-auto text-blue-600 text-2xl mb-2" />
+                    <div className="text-2xl font-bold text-blue-900">{book.downloadedNumber || 0}</div>
+                    <div className="text-sm text-blue-600">Downloads</div>
+                  </div>
+                  <div className="bg-red-50 rounded-lg p-4">
+                    <FaHeart className="mx-auto text-red-600 text-2xl mb-2" />
+                    <div className="text-2xl font-bold text-red-900">{book.wantToReadNumber || 0}</div>
+                    <div className="text-sm text-red-600">Want to Read</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Book Information */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Basic Info */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">{book.title}</h2>
+                <div className="flex items-center text-lg text-gray-600 mb-4">
+                  <FaUser className="mr-2" />
+                  by {book.author}
+                </div>
+                
+                {/* Metadata Grid */}
+                <div className="grid md:grid-cols-2 gap-6 mt-6">
+                  <div className="space-y-4">
+                    <div className="flex items-start">
+                      <FaTags className="mr-3 mt-1 text-gray-400" />
+                      <div>
+                        <div className="font-semibold text-gray-900">Genre</div>
+                        <div className="text-gray-600">{book.genre?.join(", ") || "Not specified"}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <FaLanguage className="mr-3 mt-1 text-gray-400" />
+                      <div>
+                        <div className="font-semibold text-gray-900">Language</div>
+                        <div className="text-gray-600">{book.language}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <FaFileAlt className="mr-3 mt-1 text-gray-400" />
+                      <div>
+                        <div className="font-semibold text-gray-900">Pages</div>
+                        <div className="text-gray-600">{book.printLength}</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-start">
+                      <FaBuilding className="mr-3 mt-1 text-gray-400" />
+                      <div>
+                        <div className="font-semibold text-gray-900">Publisher</div>
+                        <div className="text-gray-600">{book.publisher || "Not specified"}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <FaCalendar className="mr-3 mt-1 text-gray-400" />
+                      <div>
+                        <div className="font-semibold text-gray-900">Publication Date</div>
+                        <div className="text-gray-600">{book.publicationDate}</div>
+                      </div>
+                    </div>
+                    {book.translator && (
+                      <div className="flex items-start">
+                        <FaLanguage className="mr-3 mt-1 text-gray-400" />
+                        <div>
+                          <div className="font-semibold text-gray-900">Translator</div>
+                          <div className="text-gray-600">{book.translator}</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Descriptions */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Description</h3>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-2">Short Description</h4>
+                    <p className="text-gray-600 leading-relaxed">{book.shortDescription}</p>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-2">Full Description</h4>
+                    <p className="text-gray-600 leading-relaxed">{book.longDescription}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* System Information */}
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">System Information</h3>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-3">
+                    <div>
+                      <span className="font-medium text-gray-900">Book ID:</span>
+                      <span className="ml-2 text-gray-600 font-mono text-sm">{book.id}</span>
+                    </div>
+                    <div>
+                      <span className="font-medium text-gray-900">Collection:</span>
+                      <span className="ml-2 text-gray-600">{book.collection}</span>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div>
+                      <span className="font-medium text-gray-900">Created Date:</span>
+                      <span className="ml-2 text-gray-600">{book.createdDate}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading book details...</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
 export default function ViewPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
       <View />
     </Suspense>
   );

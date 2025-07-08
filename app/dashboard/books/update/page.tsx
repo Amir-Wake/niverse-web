@@ -7,6 +7,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState, Suspense } from "react";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { generateSequence } from "@/app/dashboard/utils/hash";
+import { 
+  FaArrowLeft, 
+  FaBook, 
+  FaUser, 
+  FaImage, 
+  FaFileAlt, 
+  FaSave,
+  FaCalendar,
+  FaTags,
+  FaBuilding
+} from "react-icons/fa";
 
 interface Book {
   collection: string;
@@ -24,6 +35,10 @@ interface Book {
   coverDominantColor: string;
   genre: string | string[];
   fileUrl: string;
+  gdRatingAverage: number;
+  gdRatingCount: string;
+  version: number;
+  createdDate: string;
 }
 
 interface UpdatedBookData extends Book {
@@ -36,7 +51,7 @@ interface HandleChangeEvent
   extends React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> {
   target:
     | HTMLInputElement
-    | (HTMLTextAreaElement & { name: string; value: string });
+    | (HTMLTextAreaElement & { name: string; value: string | number });
 }
 
 function Update() {
@@ -48,6 +63,8 @@ function Update() {
   const [user] = useAuthState(auth);
   const Id = useSearchParams()?.get("id") ?? "";
   let userSession: string | null = null;
+  const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -106,71 +123,87 @@ function Update() {
       console.error("Book data is not available");
       return;
     }
-    let coverImageUrl = book.coverImageUrl;
-    let fileUrl = book.fileUrl;
-    const fileSequence = generateSequence(book.title);
+    
+    setLoading(true);
+    setUploadProgress(true);
+    
+    try {
+      let coverImageUrl = book.coverImageUrl;
+      let fileUrl = book.fileUrl;
+      const fileSequence = generateSequence(book.title);
 
-    if (coverImage) {
-      const fileExtension = coverImage.name.split(".").pop();
-      const storageRef = ref(
-        storage,
-        `books/${book.title}/cover.${fileExtension}`
-      );
-      await uploadBytes(storageRef, coverImage);
-      coverImageUrl = await getDownloadURL(storageRef);
-    }
+      if (coverImage) {
+        const fileExtension = coverImage.name.split(".").pop();
+        const storageRef = ref(
+          storage,
+          `books/${book.title}/cover.${fileExtension}`
+        );
+        await uploadBytes(storageRef, coverImage);
+        coverImageUrl = await getDownloadURL(storageRef);
+      }
 
-    if (file) {
-      const fileExtension = file.name.split(".").pop();
-      const storageRef = ref(
-        storage,
-        `books/${book.title}/${fileSequence}.${fileExtension}`
-      );
-      await uploadBytes(storageRef, file);
-      fileUrl = await getDownloadURL(storageRef);
-    }
+      if (file) {
+        const fileExtension = file.name.split(".").pop();
+        const storageRef = ref(
+          storage,
+          `books/${book.title}/${fileSequence}.${fileExtension}`
+        );
+        await uploadBytes(storageRef, file);
+        fileUrl = await getDownloadURL(storageRef);
+      }
 
-    const updatedBookData: UpdatedBookData = {
-      ...book,
-      coverImageUrl,
-      fileUrl,
-      genre:
-        typeof book.genre === "string" && book.genre.length > 0
-          ? book.genre.split(",").map((g) => g.trim().toLowerCase())
-          : book.genre,
-    };
+      const updatedBookData: UpdatedBookData = {
+        ...book,
+        coverImageUrl,
+        fileUrl,
+        genre:
+          typeof book.genre === "string" && book.genre.length > 0
+            ? book.genre.split(",").map((g) => g.trim().toLowerCase())
+            : book.genre,
+      };
 
-    const token = await auth.currentUser?.getIdToken();
+      const token = await auth.currentUser?.getIdToken();
 
-    fetch(`/api/books?id=${Id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(updatedBookData),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to update book");
-        }
-        return response.json();
-      })
-      .then(() => {
-        router.push("/dashboard/books");
-      })
-      .catch((error) => {
-        console.error("Error updating book", error);
+      const response = await fetch(`/api/books?id=${Id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedBookData),
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to update book");
+      }
+
+      router.push("/dashboard/books");
+    } catch (error) {
+      console.error("Error updating book", error);
+      alert("Error updating book. Please try again.");
+    } finally {
+      setLoading(false);
+      setUploadProgress(false);
+    }
   };
 
   const handleChange = (e: HandleChangeEvent): void => {
     const { name, value } = e.target;
     setBook((prevBook) => {
       if (!prevBook) return prevBook;
+      
+      let convertedValue: string|number = value;
+      
+      // Convert numeric fields to proper types
+      if (name === 'gdRatingAverage') {
+        convertedValue = value === '' ? 0 : parseFloat(value) || 0;
+      } else if (name === 'version') {
+        convertedValue = value === '' ? 0 : parseInt(value, 10) || 0;
+      }
+      
       return {
         ...prevBook,
-        [name]: value,
+        [name]: convertedValue,
       };
     });
   };
@@ -182,220 +215,446 @@ function Update() {
   if (!user) return null;
 
   return (
-    <>
-      <title>dashboard</title>
-      <div className="flex justify-between items-center p-3 border-b-2 mb-10">
-        <div className="w-1/4">
-          <button className="p-2 text-2xl" onClick={handleBack}>
-            &lt; Back
-          </button>
-        </div>
-        <div className="w-2/4">
-          <h2 className="text-center font-bold text-2xl">Update</h2>
-        </div>
-        <div className="w-1/4 text-right">
-          <button
-            className="bg-red-500 text-white p-1 text-l rounded"
-            onClick={handleSignOut}
-          >
-            Sign Out
-          </button>
-        </div>
-      </div>
-      <br />
-      <div className="container mx-auto">
-        <div className="flex justify-center">
-          <div className="w-full max-w-lg">
-            {book && (
-              <Form
-                onSubmit={handleSubmit}
-                className="space-y-4 bg-white text-black p-3"
+    <div className="min-h-screen bg-gray-50">
+      <title>Update Book - Nverse Dashboard</title>
+      
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-4">
+              <button 
+                onClick={handleBack}
+                className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+                disabled={loading}
               >
-                <Form.Group id="collection">
-                  <Form.Label>Collection</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="collection"
-                    value={book.collection}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded"
-                  />
-                </Form.Group>
-                <Form.Group id="title">
-                  <Form.Label>Title</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="title"
-                    value={book.title}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded"
-                  />
-                </Form.Group>
-                <Form.Group id="author">
-                  <Form.Label>Author</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="author"
-                    value={book.author}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded"
-                  />
-                </Form.Group>
-                <Form.Group id="coverImage" className="mt-3">
-                  <Form.Label>Cover Image</Form.Label>
-                  <img
-                    src={book.coverImageUrl}
-                    alt={book.title}
-                    className="mt-3 w-48 h-72 object-cover"
-                  />
-                  <Form.Control
-                    type="file"
-                    onChange={handleImageChange}
-                    className="w-full px-3 py-2 border rounded"
-                  />
-                </Form.Group>
-                <Form.Group id="coverDominantColor">
-                  <Form.Label>Cover Colour</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="coverDominantColor"
-                    value={book.coverDominantColor}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded"
-                  />
-                </Form.Group>
-                <Form.Group id="shortDescription" className="mt-3">
-                  <Form.Label>Short Description</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    name="shortDescription"
-                    value={book.shortDescription}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded"
-                  />
-                </Form.Group>
-                <Form.Group id="longDescription" className="mt-3">
-                  <Form.Label>Long Description</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    name="longDescription"
-                    value={book.longDescription}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded"
-                  />
-                </Form.Group>
-                <Form.Group id="genre" className="mt-3">
-                  <Form.Label>Genre (comma separated)</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="genre"
-                    value={book.genre}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded"
-                  />
-                </Form.Group>
-                <Form.Group id="printLength" className="mt-3">
-                  <Form.Label>Print Length</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="printLength"
-                    value={book.printLength}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded"
-                  />
-                </Form.Group>
-                <Form.Group id="ageRate" className="mt-3">
-                  <Form.Label>Age Rating</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="ageRate"
-                    value={book.ageRate}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded"
-                  />
-                </Form.Group>
-                <Form.Group id="language" className="mt-3">
-                  <Form.Label>Language</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="language"
-                    value={book.language}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded"
-                  />
-                </Form.Group>
-                <Form.Group id="publisher" className="mt-3">
-                  <Form.Label>Publisher</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="publisher"
-                    value={book.publisher}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded"
-                  />
-                </Form.Group>
-                <Form.Group id="translator" className="mt-3">
-                  <Form.Label>Translator</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="translator"
-                    value={book.translator}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded"
-                  />
-                </Form.Group>
-                <Form.Group id="publicationDate" className="mt-3">
-                  <Form.Label>Publication Date</Form.Label>
-                  <Form.Control
-                    type="date"
-                    name="publicationDate"
-                    value={book.publicationDate}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded"
-                  />
-                </Form.Group>
-                <Form.Group id="file" className="mt-3">
-                  <Form.Label>File</Form.Label>
-                  <Form.Control
-                    type="file"
-                    onChange={handleFileChange}
-                    className="w-full px-3 py-2 border rounded"
-                  />
-                </Form.Group>
-                <div className="text-center mt-4">
-                  <Button
-                    className="bg-blue-500 text-white py-2 px-4 rounded"
-                    type="submit"
-                  >
-                    Update
-                  </Button>
-                </div>
-              </Form>
-            )}
+                <FaArrowLeft className="mr-2" />
+                Back to Books
+              </button>
+              <div className="h-6 w-px bg-gray-300"></div>
+              <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+                <FaBook className="mr-3 text-blue-600" />
+                Update Book
+              </h1>
+            </div>
+            <button
+              onClick={handleSignOut}
+              className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
+              disabled={loading}
+            >
+              Sign Out
+            </button>
           </div>
         </div>
       </div>
-      <br />
-      <br />
-    </>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-6 py-8">
+        {book ? (
+          <div className="max-w-4xl mx-auto">
+            <Form onSubmit={handleSubmit} className="space-y-8">
+              <div className="grid lg:grid-cols-3 gap-8">
+                {/* Cover Image Section */}
+                <div className="lg:col-span-1">
+                  <div className="bg-white rounded-lg shadow-sm p-6 sticky top-8">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                      <FaImage className="mr-2 text-blue-600" />
+                      Book Cover
+                    </h3>
+                    <div className="space-y-4">
+                      <div className="aspect-[3/4] relative">
+                        <img
+                          src={book.coverImageUrl}
+                          alt={book.title}
+                          className="w-full h-full object-cover rounded-lg shadow-md"
+                        />
+                      </div>
+                      <Form.Group>
+                        <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                          Update Cover Image
+                        </Form.Label>
+                        <Form.Control
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                        />
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                          Dominant Color
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="coverDominantColor"
+                          value={book.coverDominantColor}
+                          onChange={handleChange}
+                          placeholder="#000000"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                        />
+                      </Form.Group>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Form Fields */}
+                <div className="lg:col-span-2 space-y-6">
+                  {/* Basic Information */}
+                  <div className="bg-white rounded-lg shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                      <FaBook className="mr-2 text-blue-600" />
+                      Basic Information
+                    </h3>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <Form.Group>
+                        <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                          Collection
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="collection"
+                          value={book.collection}
+                          onChange={handleChange}
+                          required
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                        />
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                          Language
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="language"
+                          value={book.language}
+                          onChange={handleChange}
+                          required
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                        />
+                      </Form.Group>
+                    </div>
+                    <div className="mt-6">
+                      <Form.Group>
+                        <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                          Title
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="title"
+                          value={book.title}
+                          onChange={handleChange}
+                          required
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                        />
+                      </Form.Group>
+                    </div>
+                  </div>
+
+                  {/* Author Information */}
+                  <div className="bg-white rounded-lg shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                      <FaUser className="mr-2 text-blue-600" />
+                      Author Information
+                    </h3>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <Form.Group>
+                        <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                          Author
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="author"
+                          value={book.author}
+                          onChange={handleChange}
+                          required
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                        />
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                          Translator
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="translator"
+                          value={book.translator}
+                          onChange={handleChange}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                        />
+                      </Form.Group>
+                    </div>
+                  </div>
+
+                  {/* Content Details */}
+                  <div className="bg-white rounded-lg shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                      <FaFileAlt className="mr-2 text-blue-600" />
+                      Content Details
+                    </h3>
+                    <div className="space-y-6">
+                      <Form.Group>
+                        <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                          Short Description
+                        </Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          rows={3}
+                          name="shortDescription"
+                          value={book.shortDescription}
+                          onChange={handleChange}
+                          required
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                        />
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                          Long Description
+                        </Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          rows={6}
+                          name="longDescription"
+                          value={book.longDescription}
+                          onChange={handleChange}
+                          required
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                        />
+                      </Form.Group>
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <Form.Group>
+                          <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                            Genre (comma separated)
+                          </Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="genre"
+                            value={book.genre}
+                            onChange={handleChange}
+                            placeholder="fiction, drama, romance"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                          />
+                        </Form.Group>
+                        <Form.Group>
+                          <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                            Age Rating
+                          </Form.Label>
+                          <Form.Control
+                            type="text"
+                            name="ageRate"
+                            value={book.ageRate}
+                            onChange={handleChange}
+                            required
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                          />
+                        </Form.Group>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Publishing Information */}
+                  <div className="bg-white rounded-lg shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                      <FaBuilding className="mr-2 text-blue-600" />
+                      Publishing Information
+                    </h3>
+                    <div className="grid md:grid-cols-3 gap-6">
+                      <Form.Group>
+                        <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                          Publisher
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="publisher"
+                          value={book.publisher}
+                          onChange={handleChange}
+                          required
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                        />
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                          Publication Date
+                        </Form.Label>
+                        <Form.Control
+                          type="date"
+                          name="publicationDate"
+                          value={book.publicationDate}
+                          onChange={handleChange}
+                          required
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                        />
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                          Print Length
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="printLength"
+                          value={book.printLength}
+                          onChange={handleChange}
+                          required
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                        />
+                      </Form.Group>
+                    </div>
+                  </div>
+
+                  {/* Goodreads Rating */}
+                  <div className="bg-white rounded-lg shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                      <FaTags className="mr-2 text-blue-600" />
+                      Goodreads Rating
+                    </h3>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <Form.Group>
+                        <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                          Average Rating
+                        </Form.Label>
+                        <Form.Control
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          max="5"
+                          name="gdRatingAverage"
+                          value={book.gdRatingAverage||0}
+                          onChange={handleChange}
+                          placeholder="4.25"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                        />
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                          Rating Count
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          name="gdRatingCount"
+                          value={book.gdRatingCount||"0"}
+                          onChange={handleChange}
+                          placeholder="1,234"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                        />
+                      </Form.Group>
+                    </div>
+                  </div>
+
+                  {/* Version & Date Information */}
+                  <div className="bg-white rounded-lg shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                      <FaCalendar className="mr-2 text-blue-600" />
+                      Version & Date Information
+                    </h3>
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <Form.Group>
+                        <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                          Version
+                        </Form.Label>
+                        <Form.Control
+                          type="number"
+                          min="0"
+                          step="1"
+                          name="version"
+                          value={book.version||0}
+                          onChange={handleChange}
+                          placeholder="1"
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                        />
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                          Created Date
+                        </Form.Label>
+                        <Form.Control
+                          type="datetime-local"
+                          name="createdDate"
+                          value={book.createdDate ? new Date(book.createdDate).toISOString().slice(0, 16) : ''}
+                          onChange={handleChange}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                        />
+                      </Form.Group>
+                    </div>
+                  </div>
+
+                  {/* File Upload */}
+                  <div className="bg-white rounded-lg shadow-sm p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                      <FaFileAlt className="mr-2 text-blue-600" />
+                      Book File
+                    </h3>
+                    <Form.Group>
+                      <Form.Label className="block text-sm font-medium text-gray-700 mb-2">
+                        Update Book File (EPUB)
+                      </Form.Label>
+                      <Form.Control
+                        type="file"
+                        accept=".epub"
+                        onChange={handleFileChange}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                      />
+                      <p className="text-sm text-gray-500 mt-2">
+                        Leave empty to keep current file
+                      </p>
+                    </Form.Group>
+                  </div>
+
+                  {/* Submit Button */}
+                  <div className="bg-white rounded-lg shadow-sm p-6">
+                    <div className="flex justify-end space-x-4">
+                      <button
+                        type="button"
+                        onClick={handleBack}
+                        disabled={loading}
+                        className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                      >
+                        Cancel
+                      </button>
+                      <Button
+                        type="submit"
+                        disabled={loading}
+                        className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center transition-colors disabled:opacity-50 border-0"
+                      >
+                        {loading ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                            {uploadProgress ? 'Uploading...' : 'Updating...'}
+                          </>
+                        ) : (
+                          <>
+                            <FaSave className="mr-2" />
+                            Update Book
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Form>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading book details...</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
 export default function UpdatePage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
       <Update />
     </Suspense>
   );
